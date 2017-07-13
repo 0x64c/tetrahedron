@@ -1,0 +1,10 @@
+#ifndef MYDEF
+#include "mytypes.h"
+#endif
+extern void gfx_init();
+extern void gfx_done();
+extern void gfx_do();
+extern void updatemenu(int,MENU_CATEGORY);
+extern void del_menu();
+extern void init_menu();
+extern int maxlines();
