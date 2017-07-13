@@ -116,7 +116,7 @@ void init_menu(){
 }
 
 void gfx_init(){
-	fontfile=(char*)malloc(sizeof(char));
+	//fontfile=(char*)malloc(sizeof(char));
 #ifdef _GCW_
 	dim.width=320;
 	dim.height=240;
@@ -126,7 +126,8 @@ void gfx_init(){
 	dim.height=600;
 	char default_font[]="/usr/share/fonts/TTF/DejaVuSansMono.ttf";
 #endif
-	fontfile=realloc(fontfile,strlen(default_font)*sizeof(char));
+	//fontfile=realloc(fontfile,strlen(default_font)*sizeof(char));
+	fontfile=malloc((strlen(default_font)+1)*sizeof(char));
 	strcpy(fontfile,default_font);
 	SDL_Init(SDL_INIT_VIDEO);
 	window = SDL_CreateWindow("tetrahedron",SDL_WINDOWPOS_UNDEFINED,
@@ -149,8 +150,11 @@ void gfx_done(){
 	del_menu();
 	SDL_DestroyTexture(tex_menu);
 	SDL_DestroyRenderer(renderer);
+	SDL_DestroyRenderer(renderer2);
+	SDL_FreeSurface(surface);
 	SDL_DestroyWindow(window);
 	TTF_CloseFont(font);
+	free(fontfile);
 	TTF_Quit();
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

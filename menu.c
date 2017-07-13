@@ -17,8 +17,8 @@ MENU_CATEGORY menu_state = MAIN_MENU;
 char* main_menu[]={"3","start","option","quit"};
 
 int numfiles;
-char* currentpath;
-char** file_browser;
+char* currentpath;//free this
+char** file_browser;//free this
 typedef enum {EMPTY,LOADED} FBSTATE;
 int file_browser_state=EMPTY;
 int menuline_offset=0;
@@ -73,6 +73,9 @@ void menu_action(MENU_ACTION action){
 					menuline_offset=0;
 					menu_loadbrowser(str);
 					free(str);
+					free(currentpath);
+					free(file_browser);
+					file_browser_state=EMPTY;
 					init_menu();
 					break;
 				case MENU_ACTION_ESCAPE:
@@ -80,6 +83,9 @@ void menu_action(MENU_ACTION action){
 					menu_state=MAIN_MENU;
 					menu_position=0;
 					menuline_offset=0;
+					free(currentpath);
+					free(file_browser);
+					file_browser_state=EMPTY;
 					init_menu();
 					break;
 				default:
