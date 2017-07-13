@@ -14,7 +14,7 @@
 
 int menu_position = 0;
 MENU_CATEGORY menu_state = MAIN_MENU;
-char* main_menu[]={"3","start","option","quit"};
+char* main_menu[]={"3","start","file browser","quit"};
 
 int numfiles;
 char* currentpath;//free this
@@ -30,7 +30,7 @@ void menu_action(MENU_ACTION action){
 			switch(action){
 				case MENU_ACTION_ENTER:
 					switch(menu_position){
-						case 0:
+						case 1:
 							del_menu();
 							menu_state=DIR_MENU;
 							menu_position=0;
@@ -38,9 +38,13 @@ void menu_action(MENU_ACTION action){
 							menu_loadbrowser(getenv("HOME"));
 							init_menu();
 							break;
-						case 1:break;
+						case 0:
+							menu_state=MENU_NONE;
+							del_menu();
+							break;
 						case 2:
 							QUIT=1;
+							del_menu();
 							break;
 					}
 					break;
@@ -73,8 +77,8 @@ void menu_action(MENU_ACTION action){
 					menuline_offset=0;
 					menu_loadbrowser(str);
 					free(str);
-					free(currentpath);
-					free(file_browser);
+					//free(currentpath);
+					//free(file_browser);
 					file_browser_state=EMPTY;
 					init_menu();
 					break;
