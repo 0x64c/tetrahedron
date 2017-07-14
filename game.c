@@ -67,7 +67,8 @@ void game_init(){
 	spawnblock();
 }
 void game_done(){
-	for(int i=0;i<numblocks;i++)free(allblocks[i]);
+	int i;
+	for(i=0;i<numblocks;i++)free(allblocks[i]);
 	free(allblocks);
 }
 void game_do(){

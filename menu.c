@@ -9,6 +9,7 @@
 #include "gfx.h"
 #include "game.h"
 #include "sys/stat.h"
+#include "linux/limits.h"
 #ifndef MYDEF
 #include "mytypes.h"
 #endif

@@ -84,8 +84,8 @@ SDL_Rect draw_block(){
 	SDL_SetRenderDrawColor(renderer2,
 		my_colours.empty.r,my_colours.empty.g,my_colours.empty.b,my_colours.empty.a);
 	SDL_RenderClear(renderer2);
-
-	for(int i=0;i<4;i++){
+	int i;
+	for(i=0;i<4;i++){
 		SDL_Colour *colour;
 		switch(block_getcolour(0,i)){
 			case 0:colour=&my_colours.red;break;
@@ -133,10 +133,11 @@ void draw_block_(SDL_Rect **rect,SDL_Texture **tex){
 void drawmenu(){
 	if(!menu_state)return;
 	SDL_RenderCopy(renderer,tex_menu,NULL,&rect_menu);
+	int i;
 	switch(menu_state){
 		case MAIN_MENU:
 		case DIR_MENU:
-			for(int i=0;i<min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());i++){
+			for(i=0;i<min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());i++){
 				SDL_RenderCopy(renderer,tex_menutext[i],NULL,rect_menutext[i]);
 			}
 			break;
@@ -144,7 +145,8 @@ void drawmenu(){
 	}
 }
 void del_menu(){
-	for(int i=0;i<min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());i++){
+	int i;
+	for(i=0;i<min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());i++){
 		SDL_DestroyTexture(tex_menutext[i]);
 		free(rect_menutext[i]);
 	}
@@ -174,7 +176,8 @@ void init_menu(){
 	int menusize=min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());
 	rect_menutext = malloc(menusize * sizeof(SDL_Rect*));
 	tex_menutext = malloc(menusize * sizeof(SDL_Texture*));
-	for(int i=0;i<menusize;i++){
+	int i;
+	for(i=0;i<menusize;i++){
 		rect_menutext[i]=malloc(sizeof(SDL_Rect));
 		updatemenu(i,menu_state);
 	}
@@ -183,7 +186,8 @@ void init_game(){
 }
 void drawgame(){
 	SDL_Rect kek={0,0,320,320};
-	for(int i=0;i<game_getnumblocks();i++){
+	int i;
+	for(i=0;i<game_getnumblocks();i++){
 		SDL_RenderCopy(renderer,block_gettex(i),block_getrect(i),&kek);//block_getrect(i));
 		printf("drawblock %d\n",i);
 	}
