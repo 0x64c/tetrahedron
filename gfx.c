@@ -2,6 +2,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <string.h>
 #include "menu.h"
+#include "game.h"
 #include <stdio.h>
 #ifndef MYDEF
 #include "mytypes.h"
@@ -14,6 +15,16 @@ SDL_Surface *surface = NULL;
 char *fontfile;
 TTF_Font *font;
 int fontsize=12;
+int SOMETHING_HAPPENED=1;
+
+struct SDL_Point block_points[][6]={
+	{{1,0},{6,0},{5,1},{2,1},{4,2},{4,3}},
+	{{1,7},{6,7},{5,6},{2,6},{3,5},{4,5}},
+	{{0,1},{0,6},{1,5},{1,2},{2,4},{3,4}},
+	{{7,1},{7,6},{6,5},{6,2},{5,3},{5,4}},
+	{{0,0},{7,7},{0,0},{0,0},{0,0},{0,0}},
+	{{0,7},{7,0},{0,0},{0,0},{0,0},{0,0}}
+};
 
 struct dim{
 	int width;
@@ -24,12 +35,28 @@ struct colours{
 	SDL_Colour empty;
 	SDL_Colour black;
 	SDL_Colour white;
+	SDL_Colour blue;
+	SDL_Colour red;
+	SDL_Colour green;
+	SDL_Colour yellow;
+	SDL_Colour magenta;
+	SDL_Colour cyan;
+	SDL_Colour orange;
+	SDL_Colour salmon;
 }colours;
 
 struct colours my_colours={
 	.empty={0x00,0x00,0x00,0x00},
 	.black={0x00,0x00,0x00,0xff},
-	.white={0xff,0xff,0xff,0xff}
+	.white={0xff,0xff,0xff,0xff},
+	.red={0xff,0x00,0x00,0xff},
+	.green={0x00,0xff,0x00,0xff},
+	.blue={0x00,0x00,0xff,0xff},
+	.yellow={0xff,0xff,0x00,0xff},
+	.magenta={0xff,0x00,0xff,0xff},
+	.cyan={0x00,0xff,0xff,0xff},
+	.orange={0xff,0x99,0x66,0xff},
+	.salmon={0x99,0x00,0xcc,0xff}
 };
 
 SDL_Texture *tex_menu;
@@ -52,6 +79,38 @@ SDL_Rect draw_menubg(){
 	return rect;
 }
 
+SDL_Rect draw_block(){
+	SDL_Rect rect={0,0,8,8};
+	SDL_SetRenderDrawColor(renderer2,
+		my_colours.empty.r,my_colours.empty.g,my_colours.empty.b,my_colours.empty.a);
+	SDL_RenderClear(renderer2);
+
+	for(int i=0;i<4;i++){
+		SDL_Colour *colour;
+		switch(block_getcolour(0,i)){
+			case 0:colour=&my_colours.red;break;
+			case 1:colour=&my_colours.green;break;
+			case 2:colour=&my_colours.blue;break;
+			case 3:colour=&my_colours.yellow;break;
+			case 4:colour=&my_colours.magenta;break;
+			case 5:colour=&my_colours.cyan;break;
+			case 6:colour=&my_colours.orange;break;
+			case 7:colour=&my_colours.salmon;break;
+			default:colour=&my_colours.white;break;
+		}
+		printf("got colour %d\n",block_getcolour(0,i));
+		SDL_SetRenderDrawColor(renderer2,colour->r,colour->g,colour->b,colour->a);
+		SDL_RenderDrawLines(renderer2,block_points[i],6);
+	}
+	SDL_SetRenderDrawColor(renderer2,
+		my_colours.black.r,my_colours.black.g,my_colours.black.b,my_colours.black.a);
+	SDL_RenderDrawLines(renderer2,block_points[4],2);
+	SDL_RenderDrawLines(renderer2,block_points[5],2);
+	//SDL_RenderFillRect(renderer2,&rect);
+	printf("rect points %d %d %d %d\n",rect.x,rect.y,rect.w,rect.h);
+	return rect;
+}
+
 SDL_Texture* draw_sprite(SDL_Rect* rect2,SDL_Rect (*draw)()){
 	SDL_Rect rect = draw();
 	SDL_Surface *dummy_surface = SDL_CreateRGBSurface(0,dim.width,dim.height,32,
@@ -64,6 +123,11 @@ SDL_Texture* draw_sprite(SDL_Rect* rect2,SDL_Rect (*draw)()){
 	rect2->w=rect.w;
 	rect2->h=rect.h;
 	return tex;
+}
+
+void draw_block_(SDL_Rect **rect,SDL_Texture **tex){
+	(*tex)=draw_sprite((*rect),draw_block);
+	SOMETHING_HAPPENED=1;
 }
 
 void drawmenu(){
@@ -104,6 +168,7 @@ void updatemenu(int line, MENU_CATEGORY category){
 	rect_menutext[line]->h=texth;
 	tex_menutext[line]=message;
 	SDL_FreeSurface(messagebox);
+	SOMETHING_HAPPENED=1;
 }
 void init_menu(){
 	int menusize=min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());
@@ -114,6 +179,18 @@ void init_menu(){
 		updatemenu(i,menu_state);
 	}
 }
+void init_game(){
+}
+void drawgame(){
+	SDL_Rect kek={0,0,320,320};
+	for(int i=0;i<game_getnumblocks();i++){
+		SDL_RenderCopy(renderer,block_gettex(i),block_getrect(i),&kek);//block_getrect(i));
+		printf("drawblock %d\n",i);
+	}
+}
+void del_game(){
+}
+
 
 void gfx_init(){
 	//fontfile=(char*)malloc(sizeof(char));
@@ -147,7 +224,8 @@ void gfx_init(){
 }
 
 void gfx_done(){
-	del_menu();
+	if(menu_state>0)del_menu();
+	if(game_state>0)del_game();
 	SDL_DestroyTexture(tex_menu);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyRenderer(renderer2);
@@ -160,7 +238,11 @@ void gfx_done(){
 }
 
 void gfx_do(){
-	drawmenu();
-	SDL_RenderPresent(renderer);
-	SDL_UpdateWindowSurface(window);
+	if(SOMETHING_HAPPENED){
+		if(menu_state>0)drawmenu();
+		if(game_state>0)drawgame();
+		SDL_RenderPresent(renderer);
+		SDL_UpdateWindowSurface(window);
+		SOMETHING_HAPPENED=0;
+	}
 }

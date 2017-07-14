@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include "menu.h"
 #include "gfx.h"
+#include "game.h"
 #ifndef MYDEF
 #include "mytypes.h"
 #endif
@@ -211,6 +212,84 @@ void input_do(){
 					}
 				}
 				break;
+			case MENU_NONE:
+				if(e.type==SDL_JOYAXISMOTION){
+					if((e.jaxis.value>joydeadzone)||(e.jaxis.value<-joydeadzone)){
+						switch(e.jaxis.axis){
+							case 0:
+								break;
+							case 1:
+								break;
+						}
+					}
+				}else if(e.type==SDL_QUIT){
+					QUIT=1;
+				}else if(e.type==SDL_KEYDOWN){
+					switch(e.key.keysym.sym){
+						case SDLK_UP://up
+							break;
+						case SDLK_DOWN://down
+							break;
+						case SDLK_LEFT://left
+							break;
+						case SDLK_RIGHT://right
+							break;
+						case SDLK_LCTRL://a
+							spawnblock();
+							break;
+						case SDLK_LALT://b
+							break;
+						case SDLK_LSHIFT://x
+							break;
+						case SDLK_SPACE://y
+							break;
+						case SDLK_TAB://l
+							break;
+						case SDLK_BACKSPACE://r
+							break;
+						case SDLK_ESCAPE://sel
+							QUIT=1;
+							break;
+						case SDLK_RETURN://start
+							break;
+						case SDLK_PAUSE://hold
+							break;
+						case SDLK_HOME://power
+							break;
+					}
+				}else if(e.type==SDL_KEYUP){
+					switch(e.key.keysym.sym){
+						case SDLK_UP://up
+							break;
+						case SDLK_DOWN://down
+							break;
+						case SDLK_LEFT://left
+							break;
+						case SDLK_RIGHT://right
+							break;
+						case SDLK_LCTRL://a
+							break;
+						case SDLK_LALT://b
+							break;
+						case SDLK_LSHIFT://x
+							break;
+						case SDLK_SPACE://y
+							break;
+						case SDLK_TAB://l
+							break;
+						case SDLK_BACKSPACE://r
+							break;
+						case SDLK_ESCAPE://sel
+							break;
+						case SDLK_RETURN://start
+							break;
+						case SDLK_PAUSE://hold
+							break;
+						case SDLK_HOME://power
+							break;
+					}
+				}
+			break;
 			default:
 				if(e.type==SDL_JOYAXISMOTION){
 					if((e.jaxis.value>joydeadzone)||(e.jaxis.value<-joydeadzone)){

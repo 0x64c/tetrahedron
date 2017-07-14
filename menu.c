@@ -7,6 +7,7 @@
 #include <string.h>
 #include "input.h"
 #include "gfx.h"
+#include "game.h"
 #include "sys/stat.h"
 #ifndef MYDEF
 #include "mytypes.h"
@@ -40,7 +41,9 @@ void menu_action(MENU_ACTION action){
 							break;
 						case 0:
 							menu_state=MENU_NONE;
+							game_state=GAME_START;
 							del_menu();
+							game_init();
 							break;
 						case 2:
 							QUIT=1;

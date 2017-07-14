@@ -20,4 +20,16 @@ typedef enum{
 	MENU_ACTION_RETURN=	1<<1,
 	MENU_ACTION_ESCAPE=	1<<2
 } MENU_ACTION;
+typedef enum{
+	GAME_NONE=		1<<0,
+	GAME_START=		1<<1,
+	GAME_END=		1<<2
+} GAME_STATE;
+
+/*typedef enum{
+	int blocksub1=0xf,
+	int blocksub2=0xf0,
+	int blocksub3=0xf00,
+	int blocksub4=0xf000
+}gameblock_mask;*/
 
