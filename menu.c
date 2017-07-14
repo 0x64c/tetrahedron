@@ -143,6 +143,7 @@ char* menu_getline(int line,MENU_CATEGORY category){
 		case DIR_MENU:str=file_browser[line]; break;
 		default:str=NULL; break;
 	}
+	printf("got line: %s\n",str);
 	return str;
 }
 int menu_getsize(MENU_CATEGORY category){
@@ -168,10 +169,15 @@ void menu_loadbrowser(char* path){
 		currentpath=malloc(PATH_MAX*sizeof(char));
 		file_browser_state=LOADED;
 	}
+	printf("trying path: %s\n",path);
 	struct stat pathstat;
 	stat(path,&pathstat);
-	if(S_ISDIR(pathstat.st_mode)||S_ISLNK(pathstat.st_mode))
+	if(S_ISDIR(pathstat.st_mode)||S_ISLNK(pathstat.st_mode)){
 		realpath(path,currentpath);
+		printf("got directory: %s\n",currentpath);
+	}else{
+		printf("path was not a directory\n");
+	}
 	//strcpy(currentpath,path);
 
 	DIR *dp;
@@ -183,8 +189,11 @@ void menu_loadbrowser(char* path){
 	{
 		while((ep=readdir(dp))){
 			count++;
-			if(count==1)file_browser=malloc(sizeof(char*));
-			else file_browser=realloc(file_browser,(count+1)*sizeof(char*));
+			//if(count==1)file_browser=malloc(sizeof(char*));
+			//else file_browser=realloc(file_browser,(count+1)*sizeof(char*));
+			char** result=realloc(file_browser,(count+1)*sizeof(char*));
+			if(result==NULL) free(result);
+			else file_browser=result;
 			char* str=ep->d_name;
 			file_browser[count-1]=malloc(NAME_MAX*sizeof(char));
 			strncpy(file_browser[count-1],str,NAME_MAX);

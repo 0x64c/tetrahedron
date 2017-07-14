@@ -39,27 +39,41 @@ SDL_Rect *block_getrect(int block){
 int game_getnumblocks(){
 	return numblocks;
 }
+void swapblock(gameblock **a,gameblock **b){
+	gameblock *temp=*a;
+	*a=*b;
+	*b=temp;
+}
 void spawnblock(){
 	numblocks++;
-	gameblock *block=malloc(sizeof(gameblock));
+	//gameblock *block=malloc(sizeof(gameblock));
+        gameblock **result=realloc(allblocks,numblocks*sizeof(gameblock*));
+        if(result==NULL)free(result);
+        else allblocks=result;
 	if(maxblocks==0){
-		allblocks=malloc(2*sizeof(gameblock*));
+		//allblocks=malloc(sizeof(gameblock*));
+		allblocks[0]=malloc(sizeof(gameblock));
 	}
 	else if(numblocks>maxblocks){
-		allblocks=realloc(allblocks,(numblocks+1)*sizeof(gameblock*));
-		gameblock *temp=allblocks[0];
-		allblocks[numblocks]=temp;
+		//allblocks=realloc(allblocks,numblocks*sizeof(gameblock*));
+		//gameblock **result=realloc(allblocks,numblocks*sizeof(gameblock*));
+		//if(result==NULL)free(result);
+		//else allblocks=result;
+		allblocks[numblocks-1]=malloc(sizeof(gameblock));
+		swapblock(&allblocks[0],&allblocks[numblocks-1]);
+		//gameblock temp=allblocks[0];
+		//allblocks[numblocks]=temp;
 	}
-	allblocks[0]=block;
+	printf("numblock,maxblock: %d,%d\n",numblocks,maxblocks);
+	//allblocks[0]=block;
 	maxblocks++;
-	block->colours=shittyrandom();
-	block->x=0;
-	block->y=0;
-	block->spin=0;
-	block->moving=1;
-	block->rect=malloc(sizeof(SDL_Rect));
-	draw_block_(&block->rect,&block->tex);
-	printf("%d %d %d \n",block->rect->x,block->rect->y,block->colours);
+	allblocks[0]->colours=shittyrandom();
+	allblocks[0]->x=0;
+	allblocks[0]->y=0;
+	allblocks[0]->spin=0;
+	allblocks[0]->moving=1;
+	allblocks[0]->rect=malloc(sizeof(SDL_Rect));
+	draw_block_(&allblocks[0]->rect,&allblocks[0]->tex);
 }
 void game_init(){
 	score=0;
