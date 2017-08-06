@@ -10,3 +10,4 @@ extern void del_menu();
 extern void init_menu();
 extern int maxlines();
 extern void draw_block_(SDL_Rect**,SDL_Texture**);
+extern void gfx_update();

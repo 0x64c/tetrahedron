@@ -8,23 +8,25 @@ int speed;
 
 typedef struct gameblock{
 	unsigned int colours;
-	unsigned int x;
-	unsigned int y;
+	int x;
+	int y;
 	int spin;
 	int moving;
 	SDL_Rect *rect;
 	SDL_Texture *tex;
 } gameblock;
 
-//struct gameblock *currentblock;
 gameblock **allblocks;
 int numblocks=0;
 int maxblocks=0;
 GAME_STATE game_state=GAME_NONE;
+struct timespec tspec;
 
 int gameblock_mask[]={0xf,0xf0,0xf00,0xf000};
 unsigned int shittyrandom(){
-	srand(time(0));
+//	srand(time(0));
+	clock_gettime(CLOCK_REALTIME,&tspec);
+	srand(tspec.tv_nsec);
 	return (unsigned int)(0x7777&rand());
 }
 unsigned int block_getcolour(int block, int c){
@@ -39,6 +41,24 @@ SDL_Rect *block_getrect(int block){
 int game_getnumblocks(){
 	return numblocks;
 }
+
+void block_getxy(int i,int* x,int* y){
+	*x=allblocks[i]->x;
+	*y=allblocks[i]->y;
+}
+
+void game_moveblock(int x,int y){
+	//todo: hardcode min/max
+	int xmax=800-32;xmax-=xmax%32;
+	int ymax=600-32;ymax-=ymax%32;
+	allblocks[0]->x+=x*32;
+	allblocks[0]->y+=y*32;
+	if(allblocks[0]->x<0)allblocks[0]->x=0;
+	else if(allblocks[0]->x>xmax)allblocks[0]->x=xmax;
+	if(allblocks[0]->y<0)allblocks[0]->y=0;
+	else if(allblocks[0]->y>ymax)allblocks[0]->y=ymax;
+	gfx_update();
+}
 void swapblock(gameblock **a,gameblock **b){
 	gameblock *temp=*a;
 	*a=*b;
@@ -46,26 +66,17 @@ void swapblock(gameblock **a,gameblock **b){
 }
 void spawnblock(){
 	numblocks++;
-	//gameblock *block=malloc(sizeof(gameblock));
         gameblock **result=realloc(allblocks,numblocks*sizeof(gameblock*));
         if(result==NULL)free(result);
         else allblocks=result;
 	if(maxblocks==0){
-		//allblocks=malloc(sizeof(gameblock*));
 		allblocks[0]=malloc(sizeof(gameblock));
 	}
 	else if(numblocks>maxblocks){
-		//allblocks=realloc(allblocks,numblocks*sizeof(gameblock*));
-		//gameblock **result=realloc(allblocks,numblocks*sizeof(gameblock*));
-		//if(result==NULL)free(result);
-		//else allblocks=result;
 		allblocks[numblocks-1]=malloc(sizeof(gameblock));
 		swapblock(&allblocks[0],&allblocks[numblocks-1]);
-		//gameblock temp=allblocks[0];
-		//allblocks[numblocks]=temp;
 	}
 	printf("numblock,maxblock: %d,%d\n",numblocks,maxblocks);
-	//allblocks[0]=block;
 	maxblocks++;
 	allblocks[0]->colours=shittyrandom();
 	allblocks[0]->x=0;
@@ -74,6 +85,7 @@ void spawnblock(){
 	allblocks[0]->moving=1;
 	allblocks[0]->rect=malloc(sizeof(SDL_Rect));
 	draw_block_(&allblocks[0]->rect,&allblocks[0]->tex);
+	gfx_update();
 }
 void game_init(){
 	score=0;

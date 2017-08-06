@@ -19,8 +19,8 @@ MENU_CATEGORY menu_state = MAIN_MENU;
 char* main_menu[]={"3","start","file browser","quit"};
 
 int numfiles;
-char* currentpath;//free this
-char** file_browser;//free this
+char* currentpath;
+char** file_browser;
 typedef enum {EMPTY,LOADED} FBSTATE;
 int file_browser_state=EMPTY;
 int menuline_offset=0;

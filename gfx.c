@@ -127,7 +127,6 @@ SDL_Texture* draw_sprite(SDL_Rect* rect2,SDL_Rect (*draw)()){
 
 void draw_block_(SDL_Rect **rect,SDL_Texture **tex){
 	(*tex)=draw_sprite((*rect),draw_block);
-	SOMETHING_HAPPENED=1;
 }
 
 void drawmenu(){
@@ -185,9 +184,11 @@ void init_menu(){
 void init_game(){
 }
 void drawgame(){
-	SDL_Rect kek={0,0,320,320};
-	int i;
-	for(i=0;i<game_getnumblocks();i++){
+	//SDL_Rect kek={0,0,32,32};
+	int i,x,y;
+	for(i=game_getnumblocks()-1;i>=0;i--){
+		block_getxy(i,&x,&y);
+		SDL_Rect kek={x,y,32,32};
 		SDL_RenderCopy(renderer,block_gettex(i),block_getrect(i),&kek);//block_getrect(i));
 		printf("drawblock %d\n",i);
 	}
@@ -195,6 +196,9 @@ void drawgame(){
 void del_game(){
 }
 
+void gfx_update(){
+	SOMETHING_HAPPENED=1;
+}
 
 void gfx_init(){
 	//fontfile=(char*)malloc(sizeof(char));

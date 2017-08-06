@@ -9,3 +9,5 @@ extern int game_getnumblocks();
 extern GAME_STATE game_state;
 extern int gameblock_mask[];
 extern void spawnblock();
+extern void game_moveblock(int,int);
+extern void block_getxy(int,int*,int*);

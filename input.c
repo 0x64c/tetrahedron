@@ -227,12 +227,16 @@ void input_do(){
 				}else if(e.type==SDL_KEYDOWN){
 					switch(e.key.keysym.sym){
 						case SDLK_UP://up
+							game_moveblock(0,-1);
 							break;
 						case SDLK_DOWN://down
+							game_moveblock(0,1);
 							break;
 						case SDLK_LEFT://left
+							game_moveblock(-1,0);
 							break;
 						case SDLK_RIGHT://right
+							game_moveblock(1,0);
 							break;
 						case SDLK_LCTRL://a
 							spawnblock();
