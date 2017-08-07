@@ -37,7 +37,8 @@ void menu_action(MENU_ACTION action){
 							menu_state=DIR_MENU;
 							menu_position=0;
 							menuline_offset=0;
-							menu_loadbrowser(getenv("HOME"));
+							//menu_loadbrowser(getenv("HOME"));
+							menu_loadbrowser("/home/daniel/code");
 							init_menu();
 							break;
 						case 0:
@@ -167,6 +168,7 @@ int cstring_cmp(const void *a, const void *b)
 void menu_loadbrowser(char* path){
 	if(file_browser_state==EMPTY){
 		currentpath=malloc(PATH_MAX*sizeof(char));
+		printf("got PATH_MAX: %d\n",PATH_MAX);
 		file_browser_state=LOADED;
 	}
 	printf("trying path: %s\n",path);
@@ -195,6 +197,7 @@ void menu_loadbrowser(char* path){
 			if(result==NULL) free(result);
 			else file_browser=result;
 			char* str=ep->d_name;
+			printf("got NAME_MAX: %d\n",NAME_MAX);
 			file_browser[count-1]=malloc(NAME_MAX*sizeof(char));
 			strncpy(file_browser[count-1],str,NAME_MAX);
 		}

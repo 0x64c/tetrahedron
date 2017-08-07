@@ -7,6 +7,7 @@
 #ifndef MYDEF
 #include "mytypes.h"
 #endif
+#include <dirent.h>
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
@@ -154,7 +155,7 @@ void updatemenu(int line, MENU_CATEGORY category){
 	int textw=0,texth=0;
 	SDL_Surface *messagebox = NULL;
 	char cursor;
-	char buffer[20];
+	char buffer[NAME_MAX];
 	if(line==menu_position)cursor='*';
 	else cursor=' ';
 	sprintf(buffer,"%c%s",cursor,menu_getline(line+maxlines()*menuline_offset,category));
