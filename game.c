@@ -246,14 +246,11 @@ void clearblocks_rsetup(int *arr,int *count,int* checked,int *numchecked,int max
 			arr[*count]=rlist[i];
 			checked[*numchecked]=rlist[i];
 		}
+		score+=((rcount-3)*5)^2;
+		printf("Score: %d\n",score);
 	}else{
 		for(i=0;i<rcount;i++,(*numchecked)++)checked[*numchecked]=rlist[i];
 	}
-	printf("Counted\t");
-	for(i=0;i<rcount;i++)printf("%d ",rlist[i]);
-	printf("\nChecked\t");
-	for(i=0;i<*numchecked;i++)printf("%d ",checked[i]);
-	printf("\n");
 }
 
 void game_clearblocks(){
@@ -276,13 +273,10 @@ void game_clearblocks(){
 				stationary,numstationary);
 		}
 	}
-	printf("Delete\t");
 	qsort(toclear,count,sizeof(int),int_cmp);
 	for(i=0;i<count;i++){
 		block_delete(toclear[i]);
-		printf("%d ",toclear[i]);
 	}
-	printf("\n");
 }
 
 void game_init(){
