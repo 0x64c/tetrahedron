@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "input.h"
 #include <math.h>
+#include "sound.h"
 int score;
 int speed;
 int gameover;
@@ -280,6 +281,8 @@ void game_clearblocks(){
 }
 
 void game_init(){
+	sound_init();
+	sound_startbgm();
 	score=0;
 	speed=0;
 	gameover=0;
@@ -288,6 +291,7 @@ void game_init(){
 	spawnblock();
 }
 void game_done(){
+	sound_done();
 	int i;
 	for(i=0;i<numblocks;i++)free(allblocks[i]);
 	free(allblocks);
