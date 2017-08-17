@@ -4,7 +4,7 @@
 #include "gfx.h"
 #include <stdio.h>
 #include "input.h"
-//#include <stdlib.h>
+#include <math.h>
 int score;
 int speed;
 int gameover;
@@ -246,7 +246,7 @@ void clearblocks_rsetup(int *arr,int *count,int* checked,int *numchecked,int max
 			arr[*count]=rlist[i];
 			checked[*numchecked]=rlist[i];
 		}
-		score+=((rcount-3)*5)^2;
+		score+=pow((rcount-3)*5,2);
 		printf("Score: %d\n",score);
 	}else{
 		for(i=0;i<rcount;i++,(*numchecked)++)checked[*numchecked]=rlist[i];
