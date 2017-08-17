@@ -227,29 +227,35 @@ void input_do(){
 				}else if(e.type==SDL_KEYDOWN){
 					switch(e.key.keysym.sym){
 						case SDLK_UP://up
-							game_moveblock(0,-1);
+							game_moveblock(0,0,-1);
 							break;
 						case SDLK_DOWN://down
-							game_moveblock(0,1);
+							game_moveblock(0,0,1);
 							break;
 						case SDLK_LEFT://left
-							game_moveblock(-1,0);
+							game_moveblock(0,-1,0);
 							break;
 						case SDLK_RIGHT://right
-							game_moveblock(1,0);
+							game_moveblock(0,1,0);
 							break;
 						case SDLK_LCTRL://a
-							spawnblock();
+							block_swapcolours(0,1,0);
 							break;
 						case SDLK_LALT://b
+							block_swapcolours(0,-1,0);
 							break;
 						case SDLK_LSHIFT://x
+							block_swapcolours(0,0,-1);
 							break;
 						case SDLK_SPACE://y
+							block_swapcolours(0,0,1);
+							//game_updateblockposition();
 							break;
 						case SDLK_TAB://l
+							spawnblock();
 							break;
 						case SDLK_BACKSPACE://r
+							block_delete(game_getnumblocks()-1);
 							break;
 						case SDLK_ESCAPE://sel
 							QUIT=1;

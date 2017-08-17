@@ -99,7 +99,7 @@ SDL_Rect draw_block(){
 			case 7:colour=&my_colours.salmon;break;
 			default:colour=&my_colours.white;break;
 		}
-		printf("got colour %d\n",block_getcolour(0,i));
+		//printf("got colour %d\n",block_getcolour(0,i));
 		SDL_SetRenderDrawColor(renderer2,colour->r,colour->g,colour->b,colour->a);
 		SDL_RenderDrawLines(renderer2,block_points[i],6);
 	}
@@ -108,7 +108,7 @@ SDL_Rect draw_block(){
 	SDL_RenderDrawLines(renderer2,block_points[4],2);
 	SDL_RenderDrawLines(renderer2,block_points[5],2);
 	//SDL_RenderFillRect(renderer2,&rect);
-	printf("rect points %d %d %d %d\n",rect.x,rect.y,rect.w,rect.h);
+	//printf("rect points %d %d %d %d\n",rect.x,rect.y,rect.w,rect.h);
 	return rect;
 }
 
@@ -191,7 +191,7 @@ void drawgame(){
 		block_getxy(i,&x,&y);
 		SDL_Rect kek={x,y,32,32};
 		SDL_RenderCopy(renderer,block_gettex(i),block_getrect(i),&kek);//block_getrect(i));
-		printf("drawblock %d\n",i);
+		//printf("drawblock %d\n",i);
 	}
 }
 void del_game(){
@@ -200,6 +200,12 @@ void del_game(){
 void gfx_update(){
 	SOMETHING_HAPPENED=1;
 }
+
+/*void redraw_block(int i){
+	SDL_DestroyTexture(block_gettex(i));
+	free(block_getrect(i));
+	draw_block_((SDL_Rect**)block_getrect(i),(SDL_Texture**)block_gettex(i));
+}*/
 
 void gfx_init(){
 	//fontfile=(char*)malloc(sizeof(char));
