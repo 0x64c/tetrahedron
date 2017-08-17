@@ -4,6 +4,7 @@
 #include "gfx.h"
 #include <stdio.h>
 #include "input.h"
+//#include <stdlib.h>
 int score;
 int speed;
 int gameover;
@@ -33,6 +34,15 @@ unsigned int block_getcolour(int block, int c){
 	return (allblocks[block]->colours&gameblock_mask[c])>>c*4;
 }
 
+int int_cmp(const void* p1, const void* p2)
+{ 
+   int i1 = *(int*) p1;
+   int i2 = *(int*) p2;
+   if (i1 < i2) return 1;
+   else if (i1 == i2) return 0;
+   else return -1;
+ }
+
 void block_delete(int i){
 	if(i>=numblocks||numblocks==0)return;
 	free(allblocks[i]);
@@ -60,6 +70,27 @@ void block_swapcolours(int i,int rot,int ref){
 
 	draw_block_(&allblocks[i]->rect,&allblocks[i]->tex);
 	gfx_update();
+}
+
+int block_checkcolours(int i,int j,int dir){
+	int ret=0;
+	switch(dir){
+		case 0:
+			if(block_getcolour(i,0)==block_getcolour(j,1))ret=1;//upper
+			break;
+		case 1:
+			if(block_getcolour(i,1)==block_getcolour(j,0))ret=1;//lower
+			break;
+		case 2:
+			if(block_getcolour(i,3)==block_getcolour(j,2))ret=1;//right
+			break;
+		case 3:
+			if(block_getcolour(i,2)==block_getcolour(j,3))ret=1;//left
+			break;
+		default:
+			break;
+	}
+	return ret;
 }
 
 unsigned int shittyrandom(){
@@ -169,87 +200,6 @@ void game_updateblockposition(){
 	}
 }
 
-/*int array_checkcontains(int* arr,int max,int val){
-	int i;
-	for(i=0;i<max;i++){
-		if(arr[i]==val)return 1;
-	}
-	return 0;
-}*/
-
-/*void game_clearblocks_(int i,int* toclear,int* count){
-	int j;
-	j=game_checkspot(i,0,-1);
-	if(j>0&&block_getcolour(j,1)==block_getcolour(i,0)&&allblocks[j]->nframesstationary>1){
-		if(array_checkcontains(toclear,*count,j)==0){
-			toclear[*count]=j;
-			count++;
-		}
-	}
-	j=game_checkspot(i,0,1);
-	if(j>0&&block_getcolour(j,0)==block_getcolour(i,1)&&allblocks[j]->nframesstationary>1){
-		if(array_checkcontains(toclear,*count,j)==0){
-			toclear[*count]=j;
-			count++;
-		}
-	}
-	j=game_checkspot(i,-1,0);
-	if(j>0&&block_getcolour(j,2)==block_getcolour(i,3)&&allblocks[j]->nframesstationary>1){
-		if(array_checkcontains(toclear,*count,j)==0){
-			toclear[*count]=j;
-			count++;
-		}
-	}
-	j=game_checkspot(i,1,0);
-	if(j>0&&block_getcolour(j,3)==block_getcolour(i,2)&&allblocks[j]->nframesstationary>1){
-		if(array_checkcontains(toclear,*count,j)==0){
-			toclear[*count]=j;
-			count++;
-		}
-	}
-}*/
-
-/*void block_deleteswap(int i,int j){
-	if(i>=numblocks||numblocks==0)return;
-	free(allblocks[i]);
-	if(j>=0)allblocks[i]=allblocks[j];
-	numblocks--;
-	gfx_update();
-}*/
-
-/*void game_clearblocks(){
-	int i;int j;int k;
-	int toclear[numblocks];
-	int count=0;
-	for(i=1;i<numblocks;i++){
-		if(allblocks[i]->nframesstationary>1){
-			if(array_checkcontains(toclear,count,i)==0){
-				toclear[count]=i;
-				count++;
-				j=0;
-				while(j<count){
-					game_clearblocks_(j,toclear,&count);
-					j++;
-				}
-				if(count>=3){
-					for(j=0;j<count;j++){
-						k=numblocks-1;
-						while(array_checkcontains(toclear,count,k)){
-							if(k<=1)break;
-							k--;
-						}
-						if(k>j&&k>1){
-							block_deleteswap(j,k);
-							i--;
-						}
-						else block_deleteswap(j,-1);
-					}
-				}
-			}
-		}
-	}
-}*/
-
 int array_checkcontains(int* arr,int max,int val){
 	int i;
 	for(i=0;i<max;i++){
@@ -258,30 +208,14 @@ int array_checkcontains(int* arr,int max,int val){
 	return 0;
 }
 
-/*typedef struct step{
-	int item;
-	struct step* prev;
-}step;*/
-
-/*int game_checkspot(int i,int xoff, int yoff){
-	int j;
-	for(j=0;j<numblocks;j++){
-		if(j==i)continue;
-		if(abs(allblocks[i]->x+xoff-allblocks[j]->x)<32&&abs(allblocks[i]->y+yoff-allblocks[j]->y)<32){
-			printf("spot check 1\n");
-			return j;
-		}
-	}
-	printf("spot check 0\n");
-	return -1;
-}*/
-
 void clearblocks_rdo(int*,int*,int,int*,int);
-int clearblocks_rcheck(int *list,int *count,int start,int *stationary,int nstationary,int x,int y){
+int clearblocks_rcheck(int *list,int *count,int start,int *stationary,int nstationary,
+		int x,int y,int dir){
 	int j;
 	if((j=game_checkspot(start,x,y))>=0
 			&&array_checkcontains(list,*count,j)==0
 			&&array_checkcontains(stationary,nstationary,j)>0
+			&&block_checkcolours(start,j,dir)>0
 			){
 		list[*count]=j;
 		(*count)++;
@@ -292,10 +226,10 @@ int clearblocks_rcheck(int *list,int *count,int start,int *stationary,int nstati
 
 void clearblocks_rdo(int *list,int *count,int start,int *stationary,
 		int nstationary){
-	clearblocks_rcheck(list,count,start,stationary,nstationary,32,0);
-	clearblocks_rcheck(list,count,start,stationary,nstationary,-32,0);
-	clearblocks_rcheck(list,count,start,stationary,nstationary,0,32);
-	clearblocks_rcheck(list,count,start,stationary,nstationary,0,-32);
+	clearblocks_rcheck(list,count,start,stationary,nstationary,32,0,2);
+	clearblocks_rcheck(list,count,start,stationary,nstationary,-32,0,3);
+	clearblocks_rcheck(list,count,start,stationary,nstationary,0,32,1);
+	clearblocks_rcheck(list,count,start,stationary,nstationary,0,-32,0);
 	return;
 }
 
@@ -322,17 +256,6 @@ void clearblocks_rsetup(int *arr,int *count,int* checked,int *numchecked,int max
 	printf("\n");
 }
 
-/*void game_clearblocks_walk(int* arr, int* max){
-	int i;//,j,k,l;
-	int clear[*max];
-	int count=0;
-	//int origin_num;
-	for(i=0;i<*max;i++){
-		if(array_checkcontains(clear,count,i))continue;
-		//clearblocks_rsetup();
-	}
-}*/
-
 void game_clearblocks(){
 	int i;
 	int toclear[numblocks];
@@ -342,20 +265,21 @@ void game_clearblocks(){
 	int count=0;
 	int numstationary=0;
 	for(i=1;i<numblocks;i++){
-		if(allblocks[i]->nframesstationary>1){
+		if(allblocks[i]->nframesstationary>0){
 			stationary[numstationary]=i;
 			numstationary++;
 		}
 	}
 	for(i=0;i<numstationary;i++){
-		//printf("Checking %i",i);
 		if(array_checkcontains(checked,numchecked,stationary[i])==0){
 			clearblocks_rsetup(toclear,&count,checked,&numchecked,numblocks,stationary[i],
 				stationary,numstationary);
 		}
 	}
 	printf("Delete\t");
+	qsort(toclear,count,sizeof(int),int_cmp);
 	for(i=0;i<count;i++){
+		block_delete(toclear[i]);
 		printf("%d ",toclear[i]);
 	}
 	printf("\n");
