@@ -8,3 +8,4 @@ Features to implement:
 * next block preview
 * score counter display
 * high scores
+* music and sound effects
