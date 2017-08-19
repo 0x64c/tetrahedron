@@ -21,90 +21,20 @@ char* main_menu[]={"3","start","file browser","quit"};
 int numfiles;
 char* currentpath;
 char** file_browser;
-typedef enum {EMPTY,LOADED} FBSTATE;
-int file_browser_state=EMPTY;
+//typedef enum {EMPTY,LOADED} FBSTATE;
+//int file_browser_state=EMPTY;
 int menuline_offset=0;
 
-void menu_action(MENU_ACTION action){
-	char *str;
-	switch(menu_state){
-		case MAIN_MENU:
-			switch(action){
-				case MENU_ACTION_ENTER:
-					switch(menu_position){
-						case 1:
-							del_menu();
-							menu_state=DIR_MENU;
-							menu_position=0;
-							menuline_offset=0;
-							//menu_loadbrowser(getenv("HOME"));
-							menu_loadbrowser("/home/daniel/code");
-							init_menu();
-							break;
-						case 0:
-							menu_state=MENU_NONE;
-							game_state=GAME_START;
-							del_menu();
-							game_init();
-							break;
-						case 2:
-							QUIT=1;
-							del_menu();
-							break;
-					}
-					break;
-				case MENU_ACTION_RETURN:
-					QUIT=1;
-					break;
-				default:break;
-			}
-			break;
-		case DIR_MENU:
-			switch(action){
-				case MENU_ACTION_ENTER:
-					del_menu();
-					str=malloc(PATH_MAX*sizeof(char));
-					str=strcpy(str,currentpath);
-					str=strcat(str,"/");
-					str=strcat(str,file_browser[menu_position]);
-					menu_position=0;
-					menuline_offset=0;
-					menu_loadbrowser(str);
-					free(str);
-					init_menu();
-					break;
-				case MENU_ACTION_RETURN:
-					del_menu();
-					str=malloc(PATH_MAX*sizeof(char));
-					str=strcpy(str,currentpath);
-					str=strcat(str,"/..");
-					menu_position=0;
-					menuline_offset=0;
-					menu_loadbrowser(str);
-					free(str);
-					//free(currentpath);
-					//free(file_browser);
-					file_browser_state=EMPTY;
-					init_menu();
-					break;
-				case MENU_ACTION_ESCAPE:
-					del_menu();
-					menu_state=MAIN_MENU;
-					menu_position=0;
-					menuline_offset=0;
-					free(currentpath);
-					free(file_browser);
-					file_browser_state=EMPTY;
-					init_menu();
-					break;
-				default:
-					break;
-			}
-			break;
-		default:
-			break;
-	}
+void menu_initbrowser(){
+	currentpath=malloc(PATH_MAX*sizeof(char));
+//	printf("got PATH_MAX: %d\n",PATH_MAX);
 }
+void menu_donebrowser(){
+	free(currentpath);
+	int i;
+	for(i=0;i<numfiles;i++)free(file_browser[i]);//invalid free
+}
+
 void menu_pointer(int value){
 	int max;
 	switch(menu_state){
@@ -166,11 +96,11 @@ int cstring_cmp(const void *a, const void *b)
 	comparison function */ 
 } 
 void menu_loadbrowser(char* path){
-	if(file_browser_state==EMPTY){
-		currentpath=malloc(PATH_MAX*sizeof(char));
+/*	if(file_browser_state==EMPTY){
+		//currentpath=malloc(PATH_MAX*sizeof(char));
 		printf("got PATH_MAX: %d\n",PATH_MAX);
 		file_browser_state=LOADED;
-	}
+	}*/
 	printf("trying path: %s\n",path);
 	struct stat pathstat;
 	stat(path,&pathstat);
@@ -198,11 +128,93 @@ void menu_loadbrowser(char* path){
 			else file_browser=result;
 			char* str=ep->d_name;
 			printf("got NAME_MAX: %d\n",NAME_MAX);
-			file_browser[count-1]=malloc(NAME_MAX*sizeof(char));
-			strncpy(file_browser[count-1],str,NAME_MAX);
+			file_browser[count-1]=malloc(NAME_MAX*sizeof(char));//
+			strncpy(file_browser[count-1],str,NAME_MAX);//
 		}
 		(void)closedir(dp);
 		numfiles=count;
 		qsort(file_browser,numfiles,sizeof(*file_browser),cstring_cmp);
+	}
+}
+
+void menu_action(MENU_ACTION action){
+	char *str;
+	switch(menu_state){
+		case MAIN_MENU:
+			switch(action){
+				case MENU_ACTION_ENTER:
+					switch(menu_position){
+						case 1:
+							del_menu();
+							menu_state=DIR_MENU;
+							menu_position=0;
+							menuline_offset=0;
+							//menu_loadbrowser(getenv("HOME"));
+							menu_initbrowser();
+							menu_loadbrowser("/home/daniel/");
+							init_menu();
+							break;
+						case 0:
+							menu_state=MENU_NONE;
+							game_state=GAME_START;
+							del_menu();
+							init_game();
+							game_init();
+							break;
+						case 2:
+							QUIT=1;
+							//del_menu();
+							break;
+					}
+					break;
+				case MENU_ACTION_RETURN:
+					QUIT=1;
+					break;
+				default:break;
+			}
+			break;
+		case DIR_MENU:
+			switch(action){
+				case MENU_ACTION_ENTER:
+					del_menu();
+					str=malloc(PATH_MAX*sizeof(char));
+					str=strcpy(str,currentpath);
+					str=strcat(str,"/");
+					str=strcat(str,file_browser[menu_position]);
+					menu_position=0;
+					menuline_offset=0;
+					menu_loadbrowser(str);
+					free(str);
+					init_menu();
+					break;
+				case MENU_ACTION_RETURN:
+					del_menu();
+					str=malloc(PATH_MAX*sizeof(char));
+					str=strcpy(str,currentpath);
+					str=strcat(str,"/..");
+					menu_position=0;
+					menuline_offset=0;
+					menu_loadbrowser(str);
+					free(str);
+					//free(currentpath);
+					//free(file_browser);
+					//file_browser_state=EMPTY;
+					init_menu();
+					break;
+				case MENU_ACTION_ESCAPE:
+					del_menu();
+					menu_state=MAIN_MENU;
+					menu_position=0;
+					menuline_offset=0;
+					menu_donebrowser();
+					//file_browser_state=EMPTY;
+					init_menu();
+					break;
+				default:
+					break;
+			}
+			break;
+		default:
+			break;
 	}
 }

@@ -17,6 +17,7 @@ char *fontfile;
 TTF_Font *font;
 int fontsize=12;
 int SOMETHING_HAPPENED=1;
+int menusize;
 
 struct SDL_Point block_points[][6]={
 	{{1,0},{6,0},{5,1},{2,1},{4,2},{4,3}},
@@ -65,9 +66,24 @@ SDL_Texture **tex_menutext=NULL;
 SDL_Rect rect_menu;
 SDL_Rect **rect_menutext=NULL;
 
+SDL_Texture *gamebg_tex;
+SDL_Rect *gamebg_rect;
+
 int maxlines(){
 	return dim.height/fontsize;
 }
+
+SDL_Rect draw_gamebg(){
+	SDL_Rect rect={0,0,dim.width,dim.height};
+	SDL_SetRenderDrawColor(renderer2,
+		my_colours.empty.r,my_colours.empty.g,my_colours.empty.b,my_colours.empty.a);
+	SDL_RenderClear(renderer2);
+	SDL_SetRenderDrawColor(renderer2,
+		my_colours.black.r,my_colours.black.g,my_colours.black.b,my_colours.black.a);
+	SDL_RenderFillRect(renderer2,&rect);
+	return rect;
+}
+
 
 SDL_Rect draw_menubg(){
 	SDL_Rect rect={0,0,dim.width,dim.height};
@@ -117,7 +133,7 @@ SDL_Texture* draw_sprite(SDL_Rect* rect2,SDL_Rect (*draw)()){
 	SDL_Surface *dummy_surface = SDL_CreateRGBSurface(0,dim.width,dim.height,32,
 		0xFF000000,0x00FF0000,0x0000FF00,0x000000FF);
 	SDL_BlitSurface(surface,&rect,dummy_surface,NULL);
-	SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer,dummy_surface);
+	SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer,dummy_surface);//
 	SDL_FreeSurface(dummy_surface);
 	rect2->x=rect.x;
 	rect2->y=rect.y;
@@ -132,12 +148,12 @@ void draw_block_(SDL_Rect **rect,SDL_Texture **tex){
 
 void drawmenu(){
 	if(!menu_state)return;
-	SDL_RenderCopy(renderer,tex_menu,NULL,&rect_menu);
+	SDL_RenderCopy(renderer,tex_menu,NULL,&rect_menu);//
 	int i;
 	switch(menu_state){
 		case MAIN_MENU:
 		case DIR_MENU:
-			for(i=0;i<min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());i++){
+			for(i=0;i<menusize;i++){
 				SDL_RenderCopy(renderer,tex_menutext[i],NULL,rect_menutext[i]);
 			}
 			break;
@@ -146,10 +162,13 @@ void drawmenu(){
 }
 void del_menu(){
 	int i;
-	for(i=0;i<min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());i++){
+	for(i=0;i<menusize;i++){
 		SDL_DestroyTexture(tex_menutext[i]);
 		free(rect_menutext[i]);
 	}
+	SDL_DestroyTexture(tex_menu);
+	//free(rect_menutext);
+	//free(tex_menutext);
 }
 void updatemenu(int line, MENU_CATEGORY category){
 	int textw=0,texth=0;
@@ -161,7 +180,7 @@ void updatemenu(int line, MENU_CATEGORY category){
 	sprintf(buffer,"%c%s",cursor,menu_getline(line+maxlines()*menuline_offset,category));
 	messagebox = TTF_RenderText_Solid(font,buffer,my_colours.white);
 
-	SDL_Texture *message = SDL_CreateTextureFromSurface(renderer,messagebox);
+	SDL_Texture *message = SDL_CreateTextureFromSurface(renderer,messagebox);//
 	SDL_QueryTexture(message,NULL,NULL,&textw,&texth);
 
 	rect_menutext[line]->x=0;
@@ -173,9 +192,18 @@ void updatemenu(int line, MENU_CATEGORY category){
 	SOMETHING_HAPPENED=1;
 }
 void init_menu(){
-	int menusize=min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());
-	rect_menutext = malloc(menusize * sizeof(SDL_Rect*));
-	tex_menutext = malloc(menusize * sizeof(SDL_Texture*));
+	tex_menu = draw_sprite(&rect_menu,(*draw_menubg));
+	menusize=min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());
+
+	SDL_Texture** rtex=realloc(tex_menutext,menusize*sizeof(SDL_Texture*));
+	SDL_Rect** rrect=realloc(rect_menutext,menusize*sizeof(SDL_Rect*));
+	if(rtex==NULL)free(rtex);
+	else tex_menutext=rtex;
+	if(rrect==NULL)free(rrect);
+	else rect_menutext=rrect;
+
+	//rect_menutext = malloc(menusize * sizeof(SDL_Rect*));
+	//tex_menutext = malloc(menusize * sizeof(SDL_Texture*));
 	int i;
 	for(i=0;i<menusize;i++){
 		rect_menutext[i]=malloc(sizeof(SDL_Rect));
@@ -183,10 +211,14 @@ void init_menu(){
 	}
 }
 void init_game(){
+	gamebg_rect=malloc(sizeof(SDL_Rect));
+	gamebg_tex=draw_sprite(gamebg_rect,(*draw_gamebg));
+	
 }
 void drawgame(){
 	//SDL_Rect kek={0,0,32,32};
 	int i,x,y;
+	SDL_RenderCopy(renderer,gamebg_tex,gamebg_rect,NULL);
 	for(i=game_getnumblocks()-1;i>=0;i--){
 		block_getxy(i,&x,&y);
 		SDL_Rect kek={x,y,32,32};
@@ -195,6 +227,8 @@ void drawgame(){
 	}
 }
 void del_game(){
+	SDL_DestroyTexture(gamebg_tex);
+	free(gamebg_rect);
 }
 
 void gfx_update(){
@@ -234,13 +268,12 @@ void gfx_init(){
 	TTF_Init();
 	font = TTF_OpenFont(fontfile,fontsize);
 
-	tex_menu = draw_sprite(&rect_menu,(*draw_menubg));
 	init_menu();
 }
 
 void gfx_done(){
-	if(menu_state>0)del_menu();
-	if(game_state>0)del_game();
+	if(menu_state>1)del_menu();
+	if(game_state>1)del_game();
 	SDL_DestroyTexture(tex_menu);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyRenderer(renderer2);
@@ -254,9 +287,9 @@ void gfx_done(){
 
 void gfx_do(){
 	if(SOMETHING_HAPPENED){
-		if(menu_state>0)drawmenu();
-		if(game_state>0)drawgame();
-		SDL_RenderPresent(renderer);
+		if(menu_state>1)drawmenu();
+		if(game_state>1)drawgame();
+		SDL_RenderPresent(renderer);//
 		SDL_UpdateWindowSurface(window);
 		SOMETHING_HAPPENED=0;
 	}
