@@ -74,7 +74,7 @@ char* menu_getline(int line,MENU_CATEGORY category){
 		case DIR_MENU:str=file_browser[line]; break;
 		default:str=NULL; break;
 	}
-	printf("got line: %s\n",str);
+	//printf("got line: %s\n",str);
 	return str;
 }
 int menu_getsize(MENU_CATEGORY category){
@@ -101,24 +101,24 @@ void menu_loadbrowser(char* path){
 		printf("got PATH_MAX: %d\n",PATH_MAX);
 		file_browser_state=LOADED;
 	}*/
-	printf("trying path: %s\n",path);
+	//printf("trying path: %s\n",path);
 	struct stat pathstat;
 	stat(path,&pathstat);
 	if(S_ISDIR(pathstat.st_mode)||S_ISLNK(pathstat.st_mode)){
 		realpath(path,currentpath);
-		printf("got directory: %s\n",currentpath);
+		//printf("got directory: %s\n",currentpath);
 	}else{
-		printf("path was not a directory\n");
+		//printf("path was not a directory\n");
 	}
 	//strcpy(currentpath,path);
 
 	DIR *dp;
 	struct dirent *ep;
-	int count=0;
 
 	dp = opendir (currentpath);
 	if (dp != NULL)
 	{
+		int count=0;
 		while((ep=readdir(dp))){
 			count++;
 			//if(count==1)file_browser=malloc(sizeof(char*));
@@ -127,7 +127,7 @@ void menu_loadbrowser(char* path){
 			if(result==NULL) free(result);
 			else file_browser=result;
 			char* str=ep->d_name;
-			printf("got NAME_MAX: %d\n",NAME_MAX);
+			//printf("got NAME_MAX: %d\n",NAME_MAX);
 			file_browser[count-1]=malloc(NAME_MAX*sizeof(char));//
 			strncpy(file_browser[count-1],str,NAME_MAX);//
 		}
@@ -158,8 +158,8 @@ void menu_action(MENU_ACTION action){
 							menu_state=MENU_NONE;
 							game_state=GAME_START;
 							del_menu();
-							init_game();
 							game_init();
+							init_game();
 							break;
 						case 2:
 							QUIT=1;

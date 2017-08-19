@@ -302,6 +302,6 @@ void game_do(){
 		game_updateblockposition();
 		game_clearblocks();
 		movementtime=gametimer;
+		if(gameover)QUIT=1;
 	}
-	if(gameover)QUIT=1;
 }
