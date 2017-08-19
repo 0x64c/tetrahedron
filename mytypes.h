@@ -1,5 +1,11 @@
 #define MYDEF
 
+#ifdef _GCW_
+#define blockspacing 16
+#else
+#define blockspacing 48
+#endif
+
 #define max(a,b) \
 ({ __typeof__ (a) _a = (a); \
 __typeof__ (b) _b = (b); \

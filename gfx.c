@@ -52,13 +52,21 @@ struct colours my_colours={
 	.black={0x00,0x00,0x00,0xff},
 	.white={0xff,0xff,0xff,0xff},
 	.red={0xff,0x00,0x00,0xff},
+	.green={0x00,0xaa,0x00,0xff},
+	.blue={0x00,0x00,0xff,0xff},
+	.yellow={0xff,0xff,0x00,0xff},
+	.magenta={0xaa,0x00,0xff,0xff},
+	.cyan={0x55,0xaa,0xff,0xff},
+	.orange={0xaa,0x55,0x00,0xff},
+	.salmon={0xaa,0xaa,0xaa,0xff}
+	/*.red={0xff,0x00,0x00,0xff},
 	.green={0x00,0xff,0x00,0xff},
 	.blue={0x00,0x00,0xff,0xff},
 	.yellow={0xff,0xff,0x00,0xff},
 	.magenta={0xff,0x00,0xff,0xff},
 	.cyan={0x00,0xff,0xff,0xff},
 	.orange={0xff,0x99,0x66,0xff},
-	.salmon={0x99,0x00,0xcc,0xff}
+	.salmon={0x99,0x00,0xcc,0xff}*/
 };
 
 SDL_Texture *tex_menu;
@@ -215,11 +223,11 @@ void init_game(){
 }
 void drawgame(){
 	//SDL_Rect kek={0,0,32,32};
-	int i,x,y;
+	int i;float x,y;
 	SDL_RenderCopy(renderer,gamebg_tex,gamebg_rect,NULL);
 	for(i=game_getnumblocks()-1;i>=0;i--){
 		block_getxy(i,&x,&y);
-		SDL_Rect kek={x,y,32,32};
+		SDL_Rect kek={(int)x,(int)y,blockspacing,blockspacing};
 		SDL_RenderCopy(renderer,block_gettex(i),block_getrect(i),&kek);//block_getrect(i));
 		//printf("drawblock %d\n",i);
 	}
@@ -239,6 +247,11 @@ void gfx_update(){
 	draw_block_((SDL_Rect**)block_getrect(i),(SDL_Texture**)block_gettex(i));
 }*/
 
+void getdim(int* x,int *y){
+	*x=dim.width;
+	*y=dim.height;
+}
+
 void gfx_init(){
 	//fontfile=(char*)malloc(sizeof(char));
 #ifdef _GCW_
@@ -246,8 +259,8 @@ void gfx_init(){
 	dim.height=240;
 	char default_font[]="/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
 #else
-	dim.width=800;
-	dim.height=600;
+	dim.width=960;
+	dim.height=720;
 	char default_font[]="/usr/share/fonts/TTF/DejaVuSansMono.ttf";
 #endif
 	//fontfile=realloc(fontfile,strlen(default_font)*sizeof(char));

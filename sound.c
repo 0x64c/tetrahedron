@@ -18,7 +18,7 @@ void sound_pausebgm(){
 
 void sound_init(){
 	SDL_Init(SDL_INIT_AUDIO);
-	Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048);
+	Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,512);
 	bgm=Mix_LoadMUS(bgmpath);
 }
 

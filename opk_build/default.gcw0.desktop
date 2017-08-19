@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=tetrahedron
+Comment=demo by com64
+Exec=./tetrahedron
+Icon=icon
+Categories=games;

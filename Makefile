@@ -44,6 +44,7 @@ $(EXE) : $(OBJS)
 	cp $(EXE) $(OPK_DIR)/$(EXE)
 
 opk : $(EXE)
+	cp ./*.wav $(OPK_DIR)
 	mksquashfs $(OPK_DIR) $(EXE).opk -all-root -noappend -no-exports -no-xattrs
 
 #upload : opk
