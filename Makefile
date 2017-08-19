@@ -1,29 +1,41 @@
 ifneq ($(PLATFORM), GCW)
-$(info *** Defaulting to PC version. Specify PLATFORM=GCW for GCW build. ***)
+ifneq ($(PLATFORM), WIN)
+$(info *** Defaulting to PC Linux version. Specify PLATFORM=GCW for GCW build or WIN for Windows build. ***)
 SDL_CONFIG=/usr/bin/sdl2-config
 TOOLCHAIN=
 LIB=-L/usr/lib
 INC=-I/usr/include
+EXE = tetrahedron
 else
-$(info *** Making GCW build. Unspecify PLATFORM=GCW for PC build. ***)
+$(info *** Making PC Windows build. Unspecify PLATFORM=WIN for PC build or specify GCW for GCW build. ***)
+SDL_CONFIG=/usr/i686-w64-mingw32/bin/sdl2-config
+TOOLCHAIN=/usr/bin/i686-w64-mingw32-
+LIB=-L/usr/i686-w64-mingw32/lib
+INC=-I/usr/i686-w64-mingw32/include -static
+WINLIBS=-lfreetype -lbz2
+CFLAGS+= -D_WIN_
+EXE = tetrahedron.exe
+endif
+else
+$(info *** Making GCW build. Unspecify PLATFORM=GCW for PC build or specify WIN for Windows build. ***)
 PATH=/opt/gcw0-toolchain/usr/bin:$PATH
 SDL_CONFIG=/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/bin/sdl2-config
 TOOLCHAIN=/opt/gcw0-toolchain/usr/bin/mipsel-linux-
 LIB=-L/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/lib
 INC=-I/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/include
 CFLAGS+= -D_GCW_
+EXE = tetrahedron
 endif
 
 OPK_DIR=opk_build
 CC=$(TOOLCHAIN)gcc
 CXX=$(TOOLCHAIN)g++
 STRIP=$(TOOLCHAIN)strip
-EXE = tetrahedron
 OPK = $(EXE).opk
 RM = /usr/bin/rm -f
 
 #LDFLAGS += -lshake -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
-LDFLAGS += $(INC) -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
+LDFLAGS += $(INC) -lSDL2 -lSDL2_ttf -lSDL2_mixer $(WINLIBS) $(shell $(SDL_CONFIG) --static-libs)
 CFLAGS += -g3 $(LIB) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
 
 #REMOTE_USER=root

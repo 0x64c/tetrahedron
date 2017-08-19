@@ -6,6 +6,7 @@
 #include "input.h"
 #include <math.h>
 #include "sound.h"
+
 int score;
 int speed;
 int gameover;
@@ -98,8 +99,12 @@ int block_checkcolours(int i,int j,int dir){
 
 unsigned int shittyrandom(){
 //	srand(time(0));
+#ifndef _WIN_
 	clock_gettime(CLOCK_REALTIME,&tspec);
 	srand(tspec.tv_nsec);
+#else
+
+#endif
 	return (unsigned int)(0x7777&rand());
 }
 

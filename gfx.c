@@ -9,6 +9,14 @@
 #endif
 #include <dirent.h>
 
+#ifndef _WIN_
+#include <linux/limits.h>
+#else
+#include <limits.h>
+//#define PATH_MAX 259
+#define NAME_MAX 255
+#endif
+
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Renderer *renderer2 = NULL;

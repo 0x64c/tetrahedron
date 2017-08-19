@@ -9,7 +9,13 @@
 #include "gfx.h"
 #include "game.h"
 #include "sys/stat.h"
-#include "linux/limits.h"
+#ifndef _WIN_
+#include <linux/limits.h>
+#else
+#include <limits.h>
+//#define PATH_MAX 259
+#define NAME_MAX 255
+#endif
 #ifndef MYDEF
 #include "mytypes.h"
 #endif
@@ -96,6 +102,7 @@ int cstring_cmp(const void *a, const void *b)
 	comparison function */ 
 } 
 void menu_loadbrowser(char* path){
+#ifndef _WIN_
 /*	if(file_browser_state==EMPTY){
 		//currentpath=malloc(PATH_MAX*sizeof(char));
 		printf("got PATH_MAX: %d\n",PATH_MAX);
@@ -135,6 +142,7 @@ void menu_loadbrowser(char* path){
 		numfiles=count;
 		qsort(file_browser,numfiles,sizeof(*file_browser),cstring_cmp);
 	}
+#endif
 }
 
 void menu_action(MENU_ACTION action){
