@@ -2,12 +2,15 @@ ifneq ($(PLATFORM), GCW)
 $(info *** Defaulting to PC version. Specify PLATFORM=GCW for GCW build. ***)
 SDL_CONFIG=/usr/bin/sdl2-config
 TOOLCHAIN=
-LIB_INCLUDE=/usr/lib
+LIB=-L/usr/lib
+INC=-I/usr/include
 else
 $(info *** Making GCW build. Unspecify PLATFORM=GCW for PC build. ***)
+PATH=/opt/gcw0-toolchain/usr/bin:$PATH
 SDL_CONFIG=/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/bin/sdl2-config
 TOOLCHAIN=/opt/gcw0-toolchain/usr/bin/mipsel-linux-
-LIB_INCLUDE=/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/lib
+LIB=-L/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/lib
+INC=-I/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/include
 CFLAGS+= -D_GCW_
 endif
 
@@ -17,11 +20,11 @@ CXX=$(TOOLCHAIN)g++
 STRIP=$(TOOLCHAIN)strip
 EXE = tetrahedron
 OPK = $(EXE).opk
-RM = rm -f
+RM = /usr/bin/rm -f
 
 #LDFLAGS += -lshake -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
-LDFLAGS += -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
-CFLAGS += -g3 $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
+LDFLAGS += $(INC) -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
+CFLAGS += -g3 $(LIB) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
 
 #REMOTE_USER=root
 #REMOTE_IP=192.168.0.156
@@ -39,12 +42,12 @@ ALL : $(EXE)
 
 $(EXE) : $(OBJS)
 	$(CXX) $(OBJS) -o $(EXE) $(LDFLAGS)
-	mkdir -p $(OPK_DIR)
+	/usr/bin/mkdir -p $(OPK_DIR)
 #	$(STRIP) $(EXE)
-	cp $(EXE) $(OPK_DIR)/$(EXE)
+	/usr/bin/cp $(EXE) $(OPK_DIR)/$(EXE)
 
 opk : $(EXE)
-	cp ./*.wav $(OPK_DIR)
+	/usr/bin/cp ./*.wav $(OPK_DIR)
 	mksquashfs $(OPK_DIR) $(EXE).opk -all-root -noappend -no-exports -no-xattrs
 
 #upload : opk

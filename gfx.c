@@ -138,8 +138,8 @@ SDL_Rect draw_block(){
 
 SDL_Texture* draw_sprite(SDL_Rect* rect2,SDL_Rect (*draw)()){
 	SDL_Rect rect = draw();
-	//SDL_Surface *dummy_surface = SDL_CreateRGBSurface(0,rect.w,rect.h,32,0xFF000000,0x00FF0000,0x0000FF00,0x000000FF);
-	SDL_Surface *dummy_surface = SDL_CreateRGBSurfaceWithFormat(0,rect.w,rect.h,16,SDL_PIXELFORMAT_RGBA4444);
+	SDL_Surface *dummy_surface = SDL_CreateRGBSurface(0,rect.w,rect.h,32,0xFF000000,0x00FF0000,0x0000FF00,0x000000FF);
+	//SDL_Surface *dummy_surface = SDL_CreateRGBSurfaceWithFormat(0,rect.w,rect.h,16,SDL_PIXELFORMAT_RGBA4444);
 	SDL_BlitSurface(surface,&rect,dummy_surface,NULL);
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer,dummy_surface);//
 	SDL_FreeSurface(dummy_surface);
@@ -272,8 +272,8 @@ void gfx_init(){
 	renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED|
 		SDL_RENDERER_TARGETTEXTURE);
 
-	//surface = SDL_CreateRGBSurface(0,dim.width,dim.height,32,0xFF000000,0x00FF0000,0x0000FF00,0x000000FF);
-	surface = SDL_CreateRGBSurfaceWithFormat(0,dim.width,dim.height,16,SDL_PIXELFORMAT_RGBA4444);
+	surface = SDL_CreateRGBSurface(0,dim.width,dim.height,32,0xFF000000,0x00FF0000,0x0000FF00,0x000000FF);
+	//surface = SDL_CreateRGBSurfaceWithFormat(0,dim.width,dim.height,16,SDL_PIXELFORMAT_RGBA4444);
 	renderer2 = SDL_CreateSoftwareRenderer(surface);
 
 	TTF_Init();
