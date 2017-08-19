@@ -167,8 +167,6 @@ void del_menu(){
 		free(rect_menutext[i]);
 	}
 	SDL_DestroyTexture(tex_menu);
-	//free(rect_menutext);
-	//free(tex_menutext);
 }
 void updatemenu(int line, MENU_CATEGORY category){
 	int textw=0,texth=0;
@@ -274,6 +272,8 @@ void gfx_init(){
 void gfx_done(){
 	if(menu_state>1)del_menu();
 	if(game_state>1)del_game();
+	free(rect_menutext);
+	free(tex_menutext);
 	SDL_DestroyTexture(tex_menu);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyRenderer(renderer2);
