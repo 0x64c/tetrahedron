@@ -8,6 +8,7 @@
 #include "mytypes.h"
 #endif
 #include <dirent.h>
+#include <stdlib.h>
 
 #ifndef _WIN_
 #include <linux/limits.h>
@@ -266,6 +267,10 @@ void gfx_init(){
 	dim.width=320;
 	dim.height=240;
 	char default_font[]="/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
+#elif defined(_WIN_)
+	dim.width=960;
+	dim.height=720;
+	char default_font[]="C:/Windows/Fonts/DejaVuSansMono.ttf";
 #else
 	dim.width=960;
 	dim.height=720;

@@ -153,6 +153,7 @@ void menu_action(MENU_ACTION action){
 				case MENU_ACTION_ENTER:
 					switch(menu_position){
 						case 1:
+#ifndef _WIN_
 							del_menu();
 							menu_state=DIR_MENU;
 							menu_position=0;
@@ -161,6 +162,7 @@ void menu_action(MENU_ACTION action){
 							menu_initbrowser();
 							menu_loadbrowser("/home/daniel/");
 							init_menu();
+#endif
 							break;
 						case 0:
 							menu_state=MENU_NONE;

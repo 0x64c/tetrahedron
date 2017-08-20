@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#include <stdlib.h>
 
 #define bgmpath "music_001.wav"
 

@@ -5,16 +5,22 @@ SDL_CONFIG=/usr/bin/sdl2-config
 TOOLCHAIN=
 LIB=-L/usr/lib
 INC=-I/usr/include
-EXE = tetrahedron
+EXE=tetrahedron
+RM=/usr/bin/rm -rf
+MKDIR=/usr/bin/mkdir -p
+CP=/usr/bin/cp
 else
 $(info *** Making PC Windows build. Unspecify PLATFORM=WIN for PC build or specify GCW for GCW build. ***)
-SDL_CONFIG=/usr/i686-w64-mingw32/bin/sdl2-config
-TOOLCHAIN=/usr/bin/i686-w64-mingw32-
-LIB=-L/usr/i686-w64-mingw32/lib
-INC=-I/usr/i686-w64-mingw32/include -static
-WINLIBS=-lfreetype -lbz2
-CFLAGS+= -D_WIN_
-EXE = tetrahedron.exe
+SDL_CONFIG=/mingw/bin/sdl2-config
+TOOLCHAIN=/mingw/bin/mingw32-
+LIB=-L/mingw/lib
+INC=-I/mingw/include -static
+WINLIBS=-lfreetype -lz -lpng -lbz2 -lz
+CFLAGS+=-D_WIN_
+EXE=tetrahedron.exe
+RM=rm -rf
+MKDIR=mkdir -p
+CP=cp
 endif
 else
 $(info *** Making GCW build. Unspecify PLATFORM=GCW for PC build or specify WIN for Windows build. ***)
@@ -23,16 +29,20 @@ SDL_CONFIG=/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/bin/sdl2
 TOOLCHAIN=/opt/gcw0-toolchain/usr/bin/mipsel-linux-
 LIB=-L/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/lib
 INC=-I/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/include
-CFLAGS+= -D_GCW_
-EXE = tetrahedron
+CFLAGS+=-D_GCW_
+EXE=tetrahedron
+RM=/usr/bin/rm -rf
+MKDIR=/usr/bin/mkdir -p
+CP=/usr/bin/cp
 endif
 
 OPK_DIR=opk_build
 CC=$(TOOLCHAIN)gcc
 CXX=$(TOOLCHAIN)g++
 STRIP=$(TOOLCHAIN)strip
-OPK = $(EXE).opk
-RM = /usr/bin/rm -f
+OPK =$(EXE).opk
+
+
 
 #LDFLAGS += -lshake -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
 LDFLAGS += $(INC) -lSDL2 -lSDL2_ttf -lSDL2_mixer $(WINLIBS) $(shell $(SDL_CONFIG) --static-libs)
@@ -54,12 +64,12 @@ ALL : $(EXE)
 
 $(EXE) : $(OBJS)
 	$(CXX) $(OBJS) -o $(EXE) $(LDFLAGS)
-	/usr/bin/mkdir -p $(OPK_DIR)
+	$(MKDIR) $(OPK_DIR)
 #	$(STRIP) $(EXE)
-	/usr/bin/cp $(EXE) $(OPK_DIR)/$(EXE)
+	$(CP) $(EXE) $(OPK_DIR)/$(EXE)
 
 opk : $(EXE)
-	/usr/bin/cp ./*.wav $(OPK_DIR)
+	$(CP) ./*.wav $(OPK_DIR)
 	mksquashfs $(OPK_DIR) $(EXE).opk -all-root -noappend -no-exports -no-xattrs
 
 #upload : opk

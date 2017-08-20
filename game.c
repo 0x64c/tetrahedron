@@ -6,6 +6,7 @@
 #include "input.h"
 #include <math.h>
 #include "sound.h"
+#include <stdlib.h>
 
 int score;
 int speed;

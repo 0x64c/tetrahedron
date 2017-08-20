@@ -2,6 +2,7 @@
 #include "input.h"
 #include "game.h"
 #include <SDL2/SDL.h>
+#include <stdlib.h>
 
 #define FPS 60
 
