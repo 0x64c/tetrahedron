@@ -2,7 +2,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <stdlib.h>
 
-#define bgmpath "music_001.wav"
+#define bgmpath "music_001.ogg"
 
 Mix_Music *bgm=NULL;
 

@@ -9,18 +9,20 @@ EXE=tetrahedron
 RM=/usr/bin/rm -rf
 MKDIR=/usr/bin/mkdir -p
 CP=/usr/bin/cp
+STRIP=strip
 else
 $(info *** Making PC Windows build. Unspecify PLATFORM=WIN for PC build or specify GCW for GCW build. ***)
 SDL_CONFIG=/mingw/bin/sdl2-config
 TOOLCHAIN=/mingw/bin/mingw32-
 LIB=-L/mingw/lib
 INC=-I/mingw/include -static
-WINLIBS=-lfreetype -lz -lpng -lbz2 -lz
+WINLIBS=-lfreetype -lz -lpng -lbz2 -lz -logg
 CFLAGS+=-D_WIN_
 EXE=tetrahedron.exe
 RM=rm -rf
 MKDIR=mkdir -p
 CP=cp
+STRIP=strip
 endif
 else
 $(info *** Making GCW build. Unspecify PLATFORM=GCW for PC build or specify WIN for Windows build. ***)
@@ -34,19 +36,20 @@ EXE=tetrahedron
 RM=/usr/bin/rm -rf
 MKDIR=/usr/bin/mkdir -p
 CP=/usr/bin/cp
+STRIP=$(TOOLCHAIN)strip
 endif
 
 OPK_DIR=opk_build
 CC=$(TOOLCHAIN)gcc
 CXX=$(TOOLCHAIN)g++
-STRIP=$(TOOLCHAIN)strip
+
 OPK =$(EXE).opk
 
 
 
 #LDFLAGS += -lshake -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
 LDFLAGS += $(INC) -lSDL2 -lSDL2_ttf -lSDL2_mixer $(WINLIBS) $(shell $(SDL_CONFIG) --static-libs)
-CFLAGS += -g3 $(LIB) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
+CFLAGS += -O2 $(LIB) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
 
 #REMOTE_USER=root
 #REMOTE_IP=192.168.0.156
@@ -65,7 +68,7 @@ ALL : $(EXE)
 $(EXE) : $(OBJS)
 	$(CXX) $(OBJS) -o $(EXE) $(LDFLAGS)
 	$(MKDIR) $(OPK_DIR)
-#	$(STRIP) $(EXE)
+	$(STRIP) $(EXE)
 	$(CP) $(EXE) $(OPK_DIR)/$(EXE)
 
 opk : $(EXE)
