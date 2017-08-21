@@ -14,9 +14,6 @@ int gameover;
 int bonus;
 unsigned int gametimer,movementtime,bonustime;
 
-#define x_max 6
-#define y_max 12
-
 typedef struct gameblock{
 	unsigned int colours;
 	int x;
@@ -147,13 +144,13 @@ void getfinexy(int x,int y,int* finex, int* finey){
 	int dimw,dimh;
 	getdim(&dimw,&dimh);
 	*finex=dimw/2-blockspacing*x_max/2+x*blockspacing;
-	*finey=blockspacing*2+y*blockspacing;
+	*finey=blockspacing*1.5+y*blockspacing;
 }
 void getxy(int finex,int finey,int *x,int *y){
 	int dimw,dimh;
 	getdim(&dimw,&dimh);
 	*x=(finex-dimw/2+blockspacing*x_max/2)/blockspacing;
-	*y=(finey-blockspacing*2)/blockspacing;
+	*y=(finey-blockspacing*1.5)/blockspacing;
 }
 
 void spawnblock();
@@ -377,7 +374,7 @@ void clearblocks_rsetup(int *arr,int *count,int* checked,int *numchecked,int max
 		}
 		bonus++;
 		bonustime=SDL_GetTicks();
-		score+=pow((rcount-3)*5,2)*bonus;
+		score+=round(pow((rcount-3)*5,2))*bonus;
 		//printf("Score: %d\n",score);
 		updatescore();
 		sound_play(2);

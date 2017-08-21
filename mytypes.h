@@ -8,6 +8,9 @@
 
 int blockspacing;
 
+#define x_max 6
+#define y_max 12
+
 #define max(a,b) \
 ({ __typeof__ (a) _a = (a); \
 __typeof__ (b) _b = (b); \

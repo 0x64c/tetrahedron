@@ -107,6 +107,22 @@ SDL_Rect draw_gamebg(){
 	SDL_SetRenderDrawColor(renderer2,
 		my_colours.black.r,my_colours.black.g,my_colours.black.b,my_colours.black.a);
 	SDL_RenderFillRect(renderer2,&rect);
+	SDL_SetRenderDrawColor(renderer2,
+		my_colours.white.r,my_colours.white.g,my_colours.white.b,my_colours.white.a);
+	
+	int x,y,x1,y1;
+	getfinexy(0,0,&x,&y);
+	getfinexy(x_max+1,y_max+1,&x1,&y1);
+	/*SDL_Point points[5]={{x,y},{x,y1},{x1,y1},{x1,y},{x,y}};
+	SDL_RenderDrawLines(renderer2,points,5);*/
+	SDL_Rect b_rect0={x-blockspacing/4,y-blockspacing/4,blockspacing/4,y1-y+blockspacing/2};
+	SDL_Rect b_rect1={x1,y-blockspacing/4,blockspacing/4,y1-y+blockspacing/2};
+	SDL_Rect b_rect2={x-blockspacing/4,y-blockspacing/4,x1-x+blockspacing/2,blockspacing/4};
+	SDL_Rect b_rect3={x-blockspacing/4,y1,x1-x+blockspacing/2,blockspacing/4};
+	SDL_RenderFillRect(renderer2,&b_rect0);
+	SDL_RenderFillRect(renderer2,&b_rect1);
+	SDL_RenderFillRect(renderer2,&b_rect2);
+	SDL_RenderFillRect(renderer2,&b_rect3);
 	return rect;
 }
 
@@ -244,7 +260,7 @@ void updatescore(){
 	SDL_Texture *message=SDL_CreateTextureFromSurface(renderer,messagebox);
 	SDL_QueryTexture(message,NULL,NULL,&textw,&texth);
 	rect_score->x=dim.width/2-textw/2;
-	rect_score->y=fontsize;
+	rect_score->y=fontsize/2;
 	rect_score->w=textw;
 	rect_score->h=texth;
 	tex_score=message;
