@@ -6,6 +6,7 @@
 #include "mytypes.h"
 #endif
 #include <stdlib.h>
+#include "sound.h"
 SDL_Event e;
 SDL_Joystick *gamepad=NULL;
 int joydeadzone=1<<10;

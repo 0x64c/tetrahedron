@@ -78,6 +78,7 @@ void block_swapcolours(int i,int rot,int ref){
 
 	draw_block_(&allblocks[i]->rect,&allblocks[i]->tex);
 	gfx_update();
+	sound_play(1);
 }
 
 int block_checkcolours(int i,int j,int dir){
@@ -157,6 +158,7 @@ void getxy(int finex,int finey,int *x,int *y){
 void spawnblock();
 void game_moveblockv(int i){
 	if(i==0&&allblocks[i]->nframesstationary>4){spawnblock();return;}
+	else if(i==0&&allblocks[i]->nframesstationary==2)sound_play(0);
 	//printf("%d\t%d\n",i,allblocks[i]->nframesstationary);
 	int tx,ty;
 	if(allblocks[i]->xv>0)tx=1;
@@ -219,6 +221,7 @@ void game_moveblock(int i,int x,int y){
 	//todo: hardcode min/max
 	if(game_checkspot(i,x,y)>=0){
 		allblocks[i]->nframesstationary++;
+		//sound_play(0);
 		return;
 	}
 	//allblocks[i]->moving=1;
@@ -279,9 +282,11 @@ void spawnblock(){
 		allblocks[0]=malloc(sizeof(gameblock));
 	}
 	else if(numblocks>maxblocks){
+		allblocks[0]->yv=blockspacing/6.0f;
 		allblocks[numblocks-1]=malloc(sizeof(gameblock));
 		swapblock(&allblocks[0],&allblocks[numblocks-1]);
 	}else{
+		allblocks[0]->yv=blockspacing/6.0f;
 		allblocks[numblocks-1]=malloc(sizeof(gameblock));
 		swapblock(&allblocks[0],&allblocks[numblocks-1]);
 		maxblocks--;
@@ -303,7 +308,7 @@ void spawnblock(){
 	allblocks[0]->finex=x;
 	allblocks[0]->finey=y;
 	allblocks[0]->xv=0;
-	allblocks[0]->yv=3.6;
+	allblocks[0]->yv=blockspacing/12.0f;
 	allblocks[0]->spin=0;
 	allblocks[0]->nframesstationary=0;
 	//allblocks[0]->moving=1;
@@ -372,6 +377,7 @@ void clearblocks_rsetup(int *arr,int *count,int* checked,int *numchecked,int max
 		score+=pow((rcount-3)*5,2);
 		//printf("Score: %d\n",score);
 		updatescore();
+		sound_play(2);
 	}else{
 		for(i=0;i<rcount;i++,(*numchecked)++)checked[*numchecked]=rlist[i];
 	}
@@ -437,6 +443,7 @@ void game_reset(){
 	score=0;gameover=0;speed=0;numblocks=0;
 	updatescore();
 	spawnblock();
+	sound_play(1);
 }
 void game_do(){
 	gametimer=SDL_GetTicks();
