@@ -9,6 +9,7 @@
 #endif
 #include <dirent.h>
 #include <stdlib.h>
+#include "input.h"
 
 #ifndef _WIN_
 #include <linux/limits.h>
@@ -22,8 +23,8 @@ SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Renderer *renderer2 = NULL;
 SDL_Surface *surface = NULL;
-char *fontfile;
-TTF_Font *font;
+//char *fontfile;
+TTF_Font *font = NULL;
 int fontsize=12;
 int SOMETHING_HAPPENED=1;
 int menusize;
@@ -262,23 +263,30 @@ void getdim(int* x,int *y){
 }
 
 void gfx_init(){
+	char *default_font[]={
+		"/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+		"/usr/share/fonts/TTF/DejaVuSansMono.ttf",
+		"DejaVuSansMono.ttf",
+		"C:/Windows/Fonts/DejaVuSansMono.ttf",
+		NULL};
 	//fontfile=(char*)malloc(sizeof(char));
 #ifdef _GCW_
 	dim.width=320;
 	dim.height=240;
-	char default_font[]="/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
+	//char default_font[]="/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
 #elif defined(_WIN_)
 	dim.width=960;
 	dim.height=720;
-	char default_font[]="C:/Windows/Fonts/DejaVuSansMono.ttf";
+	//char default_font[]="C:/Windows/Fonts/DejaVuSansMono.ttf";
 #else
 	dim.width=960;
 	dim.height=720;
-	char default_font[]="/usr/share/fonts/TTF/DejaVuSansMono.ttf";
+	//char default_font[]="/usr/share/fonts/TTF/DejaVuSansMono.ttf";
 #endif
 	//fontfile=realloc(fontfile,strlen(default_font)*sizeof(char));
-	fontfile=malloc((strlen(default_font)+1)*sizeof(char));
-	strcpy(fontfile,default_font);
+	//fontfile=malloc((strlen(default_font)+1)*sizeof(char));
+	//strcpy(fontfile,default_font);
+
 	SDL_Init(SDL_INIT_VIDEO);
 	window = SDL_CreateWindow("tetrahedron",SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,dim.width,dim.height,SDL_WINDOW_SHOWN);
@@ -290,7 +298,17 @@ void gfx_init(){
 	renderer2 = SDL_CreateSoftwareRenderer(surface);
 
 	TTF_Init();
-	font = TTF_OpenFont(fontfile,fontsize);
+	//font = TTF_OpenFont(fontfile,fontsize);
+	int i;
+	for(i=0;default_font[i]!=NULL&&font==NULL;i++)
+		font = TTF_OpenFont(default_font[i],fontsize);
+	if(font==NULL){
+		QUIT=1;
+		printf("Error: Font file not found:\n");
+		for(i=0;default_font[i]!=NULL;i++)printf("%s\n",default_font[i]);
+		printf("Quitting...\n");
+		return;
+	}
 
 	init_menu();
 }
@@ -305,7 +323,7 @@ void gfx_done(){
 	SDL_FreeSurface(surface);
 	SDL_DestroyWindow(window);
 	TTF_CloseFont(font);
-	free(fontfile);
+	//free(fontfile);
 	TTF_Quit();
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

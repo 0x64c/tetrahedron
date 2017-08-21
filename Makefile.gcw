@@ -1,0 +1,54 @@
+$(info *** Making GCW-Zero build. Run `make -f Makefile.win` for MinGW/Windows or `make` for GNU/Linux. ***)
+
+PATH=/opt/gcw0-toolchain/usr/bin:$PATH
+SDL_CONFIG=/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/bin/sdl2-config
+TOOLCHAIN=/opt/gcw0-toolchain/usr/bin/mipsel-linux-
+
+LIB=-L/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/lib
+INC=-I/opt/gcw0-toolchain/usr/mipsel-gcw0-linux-uclibc/sysroot/usr/include
+
+EXE=tetrahedron
+RM=/usr/bin/rm -rf
+MKDIR=/usr/bin/mkdir -p
+CP=/usr/bin/cp
+OPK_DIR=opk_build
+
+CC=$(TOOLCHAIN)gcc
+CXX=$(TOOLCHAIN)g++
+STRIP=$(TOOLCHAIN)strip
+OPK =$(EXE).opk
+
+LDFLAGS += $(INC) -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
+CFLAGS +=-D_GCW_ -O2 $(LIB) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
+
+SRCS=$(shell echo *.c)
+OBJS=$(SRCS:%.c=%.o)
+
+#REMOTE_USER=root
+#REMOTE_IP=192.168.0.156
+#REMOTE_PATH=/media/GCW_EXT/apps
+
+ALL : $(EXE)
+
+.c.o:
+	$(CC) $(CFLAGS) $(CXXFLAGS) -c $*.c -o $*.o 
+.cpp.o:
+	$(CXX) $(CFLAGS) $(CXXFLAGS) -c $*.cpp -o $*.o 
+
+$(EXE) : $(OBJS)
+	$(CXX) $(OBJS) -o $(EXE) $(LDFLAGS)
+	$(MKDIR) $(OPK_DIR)
+	$(STRIP) $(EXE)
+	$(CP) $(EXE) $(OPK_DIR)/$(EXE)
+
+opk : $(EXE)
+	$(CP) ./*.ogg $(OPK_DIR)
+	mksquashfs $(OPK_DIR) $(EXE).opk -all-root -noappend -no-exports -no-xattrs
+
+#upload : opk
+#	scp ./$(OPK) $(REMOTE_USER)@$(REMOTE_IP):$(REMOTE_PATH)/$(OPK)
+
+clean :
+	$(RM) $(OBJS) $(EXE) $(OPK_DIR)/$(EXE) $(OPK)
+
+.PHONY:opk clean install uninstall ALL

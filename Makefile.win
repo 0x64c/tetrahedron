@@ -1,0 +1,46 @@
+$(info *** Making Windows/MinGW build. Run `make -f Makefile.gcw` for GCW-Zero or `make` for GNU/Linux. ***)
+
+ifeq ($(HOST), WINDOWS)
+$(info *** Building for Windows from a MinGW environment. Run `env HOST= make -f Makefile.win` to cross-compile from a GNU/Linux host. ***)
+SDL_CONFIG=/mingw/bin/sdl2-config
+TOOLCHAIN=/mingw/bin/mingw32-
+LIB=-L/mingw/lib
+INC=-I/mingw/include
+else
+$(info *** Cross-compiling for Windows from GNU/Linux. Run `env HOST=WINDOWS make -f Makefile.win` to build from a Windows host. ***)
+SDL_CONFIG=/usr/i686-w64-mingw32/bin/sdl2-config
+TOOLCHAIN=/usr/bin/i686-w64-mingw32-
+LIB=-L/usr/i686-w64-mingw32/lib
+INC=-I/usr/i686-w64-mingw32/include
+endif
+
+EXE=tetrahedron.exe
+RM=rm -rf
+MKDIR=mkdir -p
+CP=cp
+
+CC=$(TOOLCHAIN)gcc
+CXX=$(TOOLCHAIN)g++
+STRIP=strip
+
+LDFLAGS += $(INC) -static -lSDL2 -lSDL2_ttf -lSDL2_mixer -lfreetype -lz -lpng -lbz2 -lz -logg $(shell $(SDL_CONFIG) --static-libs)
+CFLAGS += -D_WIN_ -O2 $(LIB) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
+
+SRCS=$(shell echo *.c)
+OBJS=$(SRCS:%.c=%.o)
+
+ALL : $(EXE)
+
+.c.o:
+	$(CC) $(CFLAGS) $(CXXFLAGS) -c $*.c -o $*.o 
+.cpp.o:
+	$(CXX) $(CFLAGS) $(CXXFLAGS) -c $*.cpp -o $*.o 
+
+$(EXE) : $(OBJS)
+	$(CXX) $(OBJS) -o $(EXE) $(LDFLAGS)
+	$(STRIP) $(EXE)
+
+clean :
+	$(RM) $(OBJS) $(EXE)
+
+.PHONY:clean install uninstall ALL
