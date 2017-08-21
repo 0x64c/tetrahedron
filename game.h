@@ -15,3 +15,4 @@ extern void game_updateblockposition();
 extern void block_swapcolours(int,int,int);
 extern void block_delete(int);
 extern void releaseblock();
+extern int score;

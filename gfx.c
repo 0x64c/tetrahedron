@@ -25,7 +25,12 @@ SDL_Renderer *renderer2 = NULL;
 SDL_Surface *surface = NULL;
 //char *fontfile;
 TTF_Font *font = NULL;
+/*#ifdef _GCW_
 int fontsize=12;
+#else
+int fontsize=32;
+#endif*/
+int fontsize;
 int SOMETHING_HAPPENED=1;
 int menusize;
 
@@ -86,6 +91,9 @@ SDL_Rect **rect_menutext=NULL;
 
 SDL_Texture *gamebg_tex;
 SDL_Rect *gamebg_rect;
+
+SDL_Texture *tex_score;
+SDL_Rect *rect_score;
 
 int maxlines(){
 	return dim.height/fontsize;
@@ -186,6 +194,7 @@ void del_menu(){
 	}
 	SDL_DestroyTexture(tex_menu);
 }
+
 void updatemenu(int line, MENU_CATEGORY category){
 	int textw=0,texth=0;
 	SDL_Surface *messagebox = NULL;
@@ -226,10 +235,28 @@ void init_menu(){
 		updatemenu(i,menu_state);
 	}
 }
+void updatescore(){
+	int textw=0,texth=0;
+	SDL_Surface *messagebox=NULL;
+	char buffer[256];
+	sprintf(buffer,"Score: %d",score);
+	messagebox=TTF_RenderText_Solid(font,buffer,my_colours.white);
+	SDL_Texture *message=SDL_CreateTextureFromSurface(renderer,messagebox);
+	SDL_QueryTexture(message,NULL,NULL,&textw,&texth);
+	rect_score->x=dim.width/2-textw/2;
+	rect_score->y=fontsize;
+	rect_score->w=textw;
+	rect_score->h=texth;
+	tex_score=message;
+	SDL_FreeSurface(messagebox);
+	SOMETHING_HAPPENED=1;
+}
 void init_game(){
 	gamebg_rect=malloc(sizeof(SDL_Rect));
 	gamebg_tex=draw_sprite(gamebg_rect,(*draw_gamebg));
-	
+	rect_score=malloc(sizeof(SDL_Rect));
+	updatescore();
+	SOMETHING_HAPPENED=1;
 }
 void drawgame(){
 	//SDL_Rect kek={0,0,32,32};
@@ -241,6 +268,7 @@ void drawgame(){
 		SDL_RenderCopy(renderer,block_gettex(i),block_getrect(i),&kek);//block_getrect(i));
 		//printf("drawblock %d\n",i);
 	}
+	SDL_RenderCopy(renderer,tex_score,NULL,rect_score);
 }
 void del_game(){
 	SDL_DestroyTexture(gamebg_tex);
@@ -299,6 +327,7 @@ void gfx_init(){
 
 	TTF_Init();
 	//font = TTF_OpenFont(fontfile,fontsize);
+	fontsize=dim.height/20;
 	int i;
 	for(i=0;default_font[i]!=NULL&&font==NULL;i++)
 		font = TTF_OpenFont(default_font[i],fontsize);
@@ -309,7 +338,7 @@ void gfx_init(){
 		printf("Quitting...\n");
 		return;
 	}
-
+	blockspacing=dim.height/15;
 	init_menu();
 }
 

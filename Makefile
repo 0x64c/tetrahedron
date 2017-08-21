@@ -15,7 +15,7 @@ CXX=g++
 STRIP=strip
 
 LDFLAGS += $(INC) -lSDL2 -lSDL2_ttf -lSDL2_mixer $(shell $(SDL_CONFIG) --libs)
-CFLAGS += -O2 $(LIB) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
+CFLAGS += -g3 $(LIB) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
 
 SRCS=$(shell echo *.c)
 OBJS=$(SRCS:%.c=%.o)

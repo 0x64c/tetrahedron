@@ -13,4 +13,5 @@ extern void draw_block_(SDL_Rect**,SDL_Texture**);
 extern void gfx_update();
 extern void init_game();
 extern void getdim(int*,int*);
+extern void updatescore();
 //extern void redraw_block(int);

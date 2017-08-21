@@ -13,6 +13,9 @@ int speed;
 int gameover;
 unsigned int gametimer,movementtime;
 
+#define x_max 6
+#define y_max 12
+
 typedef struct gameblock{
 	unsigned int colours;
 	int x;
@@ -138,9 +141,22 @@ int game_checkspot(int i,int xoff, int yoff){
 	return -1;
 }
 
+void getfinexy(int x,int y,int* finex, int* finey){
+	int dimw,dimh;
+	getdim(&dimw,&dimh);
+	*finex=dimw/2-blockspacing*x_max/2+x*blockspacing;
+	*finey=blockspacing*2+y*blockspacing;
+}
+void getxy(int finex,int finey,int *x,int *y){
+	int dimw,dimh;
+	getdim(&dimw,&dimh);
+	*x=(finex-dimw/2+blockspacing*x_max/2)/blockspacing;
+	*y=(finey-blockspacing*2)/blockspacing;
+}
+
 void spawnblock();
 void game_moveblockv(int i){
-	if(i==0&&allblocks[i]->nframesstationary>10){spawnblock();return;}
+	if(i==0&&allblocks[i]->nframesstationary>4){spawnblock();return;}
 	//printf("%d\t%d\n",i,allblocks[i]->nframesstationary);
 	int tx,ty;
 	if(allblocks[i]->xv>0)tx=1;
@@ -150,43 +166,52 @@ void game_moveblockv(int i){
 	else if(allblocks[i]->yv<0)ty=-1;
 	else ty=0;
 	if(game_checkspot(i,tx,ty)>=0){
-		allblocks[i]->finex=allblocks[i]->x*blockspacing;
-		allblocks[i]->finey=allblocks[i]->y*blockspacing;
+		int x2,y2;
+		getfinexy(allblocks[i]->x,allblocks[i]->y,&x2,&y2);
+		allblocks[i]->finex=x2;
+		allblocks[i]->finey=y2;
 		allblocks[i]->nframesstationary++;
 		return;
 	}
-	int dimw,dimh;
+	/*int dimw,dimh;
 	getdim(&dimw,&dimh);
 	int xmax=dimw-blockspacing;xmax-=xmax%blockspacing;xmax=xmax/blockspacing;
-	int ymax=dimh-blockspacing;ymax-=ymax%blockspacing;ymax=ymax/blockspacing;
+	int ymax=dimh-blockspacing;ymax-=ymax%blockspacing;ymax=ymax/blockspacing;*/
 
 	//printf("fx fy x y\t%.6f %.6f %d %d\t",allblocks[i]->finex,allblocks[i]->finey,allblocks[i]->x,allblocks[i]->y);
 	allblocks[i]->finex+=allblocks[i]->xv;
 	allblocks[i]->finey+=allblocks[i]->yv;
 
-	allblocks[i]->x=allblocks[i]->finex/blockspacing;
-	allblocks[i]->y=allblocks[i]->finey/blockspacing;
+	int x1,y1;
+	getxy(allblocks[i]->finex,allblocks[i]->finey,&x1,&y1);
+
+	allblocks[i]->x=x1;
+	allblocks[i]->y=y1;
 
 	//printf("%.6f %.6f %d %d\n",allblocks[i]->finex,allblocks[i]->finey,allblocks[i]->x,allblocks[i]->y);
 
 	int tmp=0;
-	if(allblocks[i]->finex>xmax*blockspacing){
-		allblocks[i]->finex=xmax*blockspacing;
+	int x,y,x0,y0;
+	getfinexy(x_max,y_max,&x,&y);
+	getfinexy(0,0,&x0,&y0);
+	if(allblocks[i]->finex>x){
+		allblocks[i]->finex=x;
 		tmp++;
-	}else if(allblocks[i]->finex<0){
-		allblocks[i]->finex=0;
+	}else if(allblocks[i]->finex<x0){
+		allblocks[i]->finex=x0;
 		tmp++;
 	}
-	if(allblocks[i]->finey>ymax*blockspacing){
-		allblocks[i]->finey=ymax*blockspacing;
+	if(allblocks[i]->finey>y){
+		//printf("test\n");
+		allblocks[i]->finey=y;
 		tmp++;
-	}else if(allblocks[i]->finey<0){
-		allblocks[i]->finey=0;
+	}else if(allblocks[i]->finey<y0){
+		allblocks[i]->finey=y0;
 		tmp++;
 	}
 	if(tmp==0)allblocks[i]->nframesstationary=0;
 	else allblocks[i]->nframesstationary++;
-
+	//printf("%d %d %d %d\n",x0,y0,x,y);
 	gfx_update();
 }
 
@@ -197,10 +222,10 @@ void game_moveblock(int i,int x,int y){
 		return;
 	}
 	//allblocks[i]->moving=1;
-	int dimw,dimh;
+	/*int dimw,dimh;
 	getdim(&dimw,&dimh);
 	int xmax=dimw-blockspacing;xmax-=xmax%blockspacing;xmax=xmax/blockspacing;
-	int ymax=dimh-blockspacing;ymax-=ymax%blockspacing;ymax=ymax/blockspacing;
+	int ymax=dimh-blockspacing;ymax-=ymax%blockspacing;ymax=ymax/blockspacing;*/
 	int oldx=allblocks[i]->x;
 	int oldy=allblocks[i]->y;
 	allblocks[i]->x+=x;
@@ -215,15 +240,15 @@ void game_moveblock(int i,int x,int y){
 	if(tmp==2)allblocks[i]->nframesstationary=0;
 	else allblocks[i]->nframesstationary++;*/
 	int tmp=0;
-	if(allblocks[i]->x>xmax){
-		allblocks[i]->x=xmax;
+	if(allblocks[i]->x>x_max){
+		allblocks[i]->x=x_max;
 		tmp++;
 	}else if(allblocks[i]->x<0){
 		allblocks[i]->x=0;
 		tmp++;
 	}
-	if(allblocks[i]->y>ymax){
-		allblocks[i]->y=ymax;
+	if(allblocks[i]->y>y_max){
+		allblocks[i]->y=y_max;
 		tmp++;
 	}else if(allblocks[i]->y<0){
 		allblocks[i]->y=0;
@@ -232,8 +257,11 @@ void game_moveblock(int i,int x,int y){
 	if(tmp==0&&oldx!=allblocks[i]->x&&oldy!=allblocks[i]->y)allblocks[i]->nframesstationary=0;
 	else allblocks[i]->nframesstationary++;
 
-	if(abs(x)>0)allblocks[i]->finex=allblocks[i]->x*blockspacing;
-	if(abs(y)>0)allblocks[i]->finey=allblocks[i]->y*blockspacing;
+	int x_,y_;
+	getfinexy(allblocks[i]->x,allblocks[i]->y,&x_,&y_);
+
+	if(abs(x)>0)allblocks[i]->finex=x_;
+	if(abs(y)>0)allblocks[i]->finey=y_;
 
 	gfx_update();
 }
@@ -260,11 +288,20 @@ void spawnblock(){
 	}
 	//printf("numblock,maxblock: %d,%d\n",numblocks,maxblocks);
 	maxblocks++;
+
+/*	int dimw,dimh;
+	getdim(&dimw,&dimh);
+	int xmax=dimw-blockspacing;xmax-=xmax%blockspacing;xmax=xmax/blockspacing;*/
+	//int ymax=dimh-blockspacing;ymax-=ymax%blockspacing;ymax=ymax/blockspacing;
 	allblocks[0]->colours=shittyrandom();
-	allblocks[0]->x=0;
+	allblocks[0]->x=x_max/2;
 	allblocks[0]->y=0;
-	allblocks[0]->finex=0;
-	allblocks[0]->finey=0;
+
+	int x,y;
+	getfinexy(allblocks[0]->x,allblocks[0]->y,&x,&y);
+
+	allblocks[0]->finex=x;
+	allblocks[0]->finey=y;
 	allblocks[0]->xv=0;
 	allblocks[0]->yv=3.6;
 	allblocks[0]->spin=0;
@@ -333,7 +370,8 @@ void clearblocks_rsetup(int *arr,int *count,int* checked,int *numchecked,int max
 			checked[*numchecked]=rlist[i];
 		}
 		score+=pow((rcount-3)*5,2);
-		printf("Score: %d\n",score);
+		//printf("Score: %d\n",score);
+		updatescore();
 	}else{
 		for(i=0;i<rcount;i++,(*numchecked)++)checked[*numchecked]=rlist[i];
 	}
@@ -365,12 +403,12 @@ void game_clearblocks(){
 	}
 }
 void releaseblock(){
-	int dimw,dimh;
+/*	int dimw,dimh;
 	getdim(&dimw,&dimh);
 	int xmax=dimw-blockspacing;xmax-=xmax%blockspacing;xmax=xmax/blockspacing;
-	int ymax=dimh-blockspacing;ymax-=ymax%blockspacing;ymax=ymax/blockspacing;
+	int ymax=dimh-blockspacing;ymax-=ymax%blockspacing;ymax=ymax/blockspacing;*/
 	int i;
-	int top_x=ymax+1;
+	int top_x=y_max+1;
 	for(i=1;i<numblocks;i++){
 		if(allblocks[i]->x==allblocks[0]->x&&allblocks[i]->y<top_x)top_x=allblocks[i]->y;
 	}
@@ -391,7 +429,14 @@ void game_done(){
 	sound_done();
 	int i;
 	for(i=0;i<numblocks;i++)free(allblocks[i]);
-	free(allblocks);
+}
+void game_reset(){
+	int i;
+	for(i=0;i<numblocks;i++)free(allblocks[i]);
+	//free(allblocks);
+	score=0;gameover=0;speed=0;numblocks=0;
+	updatescore();
+	spawnblock();
 }
 void game_do(){
 	gametimer=SDL_GetTicks();
@@ -399,6 +444,9 @@ void game_do(){
 		game_updateblockposition();
 		game_clearblocks();
 		movementtime=gametimer;
-		if(gameover)QUIT=1;
+		if(gameover){
+			game_reset();
+			//QUIT=1;
+		}
 	}
 }
