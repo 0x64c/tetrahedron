@@ -11,7 +11,8 @@
 int score;
 int speed;
 int gameover;
-unsigned int gametimer,movementtime;
+int bonus;
+unsigned int gametimer,movementtime,bonustime;
 
 #define x_max 6
 #define y_max 12
@@ -374,7 +375,9 @@ void clearblocks_rsetup(int *arr,int *count,int* checked,int *numchecked,int max
 			arr[*count]=rlist[i];
 			checked[*numchecked]=rlist[i];
 		}
-		score+=pow((rcount-3)*5,2);
+		bonus++;
+		bonustime=SDL_GetTicks();
+		score+=pow((rcount-3)*5,2)*bonus;
 		//printf("Score: %d\n",score);
 		updatescore();
 		sound_play(2);
@@ -427,6 +430,7 @@ void game_init(){
 	score=0;
 	speed=0;
 	gameover=0;
+	bonus=0;
 	gametimer=SDL_GetTicks();
 	movementtime=gametimer;
 	spawnblock();
@@ -439,8 +443,7 @@ void game_done(){
 void game_reset(){
 	int i;
 	for(i=0;i<numblocks;i++)free(allblocks[i]);
-	//free(allblocks);
-	score=0;gameover=0;speed=0;numblocks=0;
+	score=0;gameover=0;speed=0;numblocks=0;bonus=0;
 	updatescore();
 	spawnblock();
 	sound_play(1);
@@ -451,6 +454,7 @@ void game_do(){
 		game_updateblockposition();
 		game_clearblocks();
 		movementtime=gametimer;
+		if(gametimer>bonustime+1500){bonus=0;updatescore();}
 		if(gameover){
 			game_reset();
 			//QUIT=1;

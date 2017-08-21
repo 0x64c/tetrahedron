@@ -239,7 +239,7 @@ void updatescore(){
 	int textw=0,texth=0;
 	SDL_Surface *messagebox=NULL;
 	char buffer[256];
-	sprintf(buffer,"Score: %d",score);
+	sprintf(buffer,"Score: %d x%d",score,bonus);
 	messagebox=TTF_RenderText_Solid(font,buffer,my_colours.white);
 	SDL_Texture *message=SDL_CreateTextureFromSurface(renderer,messagebox);
 	SDL_QueryTexture(message,NULL,NULL,&textw,&texth);

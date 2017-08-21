@@ -16,3 +16,4 @@ extern void block_swapcolours(int,int,int);
 extern void block_delete(int);
 extern void releaseblock();
 extern int score;
+extern int bonus;
