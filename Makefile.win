@@ -10,7 +10,7 @@ else
 $(info *** Cross-compiling for Windows from GNU/Linux. Run `env HOST=WINDOWS make -f Makefile.win` to build from a Windows host. ***)
 SDL_CONFIG=/usr/i686-w64-mingw32/bin/sdl2-config
 TOOLCHAIN=/usr/bin/i686-w64-mingw32-
-LIB=-L/usr/i686-w64-mingw32/lib
+LIB=-L/usr/i686-w64-mingw32/lib -L.
 INC=-I/usr/i686-w64-mingw32/include
 endif
 
@@ -23,8 +23,8 @@ CC=$(TOOLCHAIN)gcc
 CXX=$(TOOLCHAIN)g++
 STRIP=strip
 
-LDFLAGS += $(INC) -static -lSDL2 -lSDL2_ttf -lSDL2_mixer -lfreetype -lz -lpng -lbz2 -lz -logg $(shell $(SDL_CONFIG) --static-libs)
-CFLAGS += -D_WIN_ -O2 $(LIB) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
+LDFLAGS += $(LIB) -static -mwindows -lSDL2 -lSDL2_ttf -lSDL2_mixer -lvorbis -lvorbisfile -logg -lfreetype -lpng -lbz2 -lz $(shell $(SDL_CONFIG) --static-libs)
+CFLAGS += -D_WIN_ -g3 $(INC) $(shell $(SDL_CONFIG) --cflags) -Wall -Wextra
 
 SRCS=$(shell echo *.c)
 OBJS=$(SRCS:%.c=%.o)
@@ -38,7 +38,7 @@ ALL : $(EXE)
 
 $(EXE) : $(OBJS)
 	$(CXX) $(OBJS) -o $(EXE) $(LDFLAGS)
-	$(STRIP) $(EXE)
+#	$(STRIP) $(EXE)
 
 clean :
 	$(RM) $(OBJS) $(EXE)
