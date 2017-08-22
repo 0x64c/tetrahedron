@@ -95,6 +95,9 @@ SDL_Rect *gamebg_rect;
 SDL_Texture *tex_score;
 SDL_Rect *rect_score;
 
+SDL_Texture *gamept_tex;
+SDL_Rect *gamept_rect;
+
 int maxlines(){
 	return dim.height/fontsize;
 }
@@ -123,6 +126,18 @@ SDL_Rect draw_gamebg(){
 	SDL_RenderFillRect(renderer2,&b_rect1);
 	SDL_RenderFillRect(renderer2,&b_rect2);
 	SDL_RenderFillRect(renderer2,&b_rect3);
+	
+	return rect;
+}
+
+SDL_Rect draw_gamepointer(){
+	SDL_Rect rect={0,0,blockspacing,blockspacing*(y_max+1)};
+	SDL_SetRenderDrawColor(renderer2,
+		my_colours.empty.r,my_colours.empty.g,my_colours.empty.b,my_colours.empty.a);
+	SDL_RenderClear(renderer2);
+	SDL_SetRenderDrawColor(renderer2,
+		my_colours.white.r,my_colours.white.g,my_colours.white.b,my_colours.white.a);
+	SDL_RenderDrawRect(renderer2,&rect);
 	return rect;
 }
 
@@ -232,6 +247,7 @@ void updatemenu(int line, MENU_CATEGORY category){
 	SDL_FreeSurface(messagebox);
 	SOMETHING_HAPPENED=1;
 }
+
 void init_menu(){
 	tex_menu = draw_sprite(&rect_menu,(*draw_menubg));
 	menusize=min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());
@@ -270,14 +286,21 @@ void updatescore(){
 void init_game(){
 	gamebg_rect=malloc(sizeof(SDL_Rect));
 	gamebg_tex=draw_sprite(gamebg_rect,(*draw_gamebg));
+	gamept_rect=malloc(sizeof(SDL_Rect));
+	gamept_tex=draw_sprite(gamept_rect,(*draw_gamepointer));
 	rect_score=malloc(sizeof(SDL_Rect));
 	updatescore();
 	SOMETHING_HAPPENED=1;
 }
 void drawgame(){
 	//SDL_Rect kek={0,0,32,32};
-	int i;float x,y;
+	int i;float x,y;int xx,yy;
 	SDL_RenderCopy(renderer,gamebg_tex,gamebg_rect,NULL);
+	block_getxy(0,&x,&y);
+	getfinexy(0,0,&xx,&yy);
+	gamept_rect->x=x;
+	gamept_rect->y=yy;
+	SDL_RenderCopy(renderer,gamept_tex,NULL,gamept_rect);
 	for(i=game_getnumblocks()-1;i>=0;i--){
 		block_getxy(i,&x,&y);
 		SDL_Rect kek={(int)x,(int)y,blockspacing,blockspacing};
@@ -285,10 +308,15 @@ void drawgame(){
 		//printf("drawblock %d\n",i);
 	}
 	SDL_RenderCopy(renderer,tex_score,NULL,rect_score);
+	
 }
 void del_game(){
 	SDL_DestroyTexture(gamebg_tex);
+	SDL_DestroyTexture(gamept_tex);
+	SDL_DestroyTexture(tex_score);
 	free(gamebg_rect);
+	free(gamept_rect);
+	free(rect_score);
 }
 
 void gfx_update(){

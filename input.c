@@ -26,6 +26,42 @@ void input_init(){
 	}
 }
 
+#ifdef _GCW_
+typedef enum{
+	mykeys_up=SDLK_UP,
+	mykeys_down=SDLK_DOWN,
+	mykeys_left=SDLK_LEFT,
+	mykeys_right=SDLK_RIGHT,
+	mykeys_a=SDLK_LCTRL,
+	mykeys_b=SDLK_LALT,
+	mykeys_x=SDLK_LSHIFT,
+	mykeys_y=SDLK_SPACE,
+	mykeys_l=SDLK_TAB,
+	mykeys_r=SDLK_BACKSPACE,
+	mykeys_select=SDLK_ESCAPE,
+	mykeys_start=SDLK_RETURN,
+	mykeys_hold=SDLK_PAUSE,
+	mykeys_power=SDLK_HOME
+}keys;
+#else
+typedef enum{
+	mykeys_up=SDLK_w,
+	mykeys_down=SDLK_s,
+	mykeys_left=SDLK_a,
+	mykeys_right=SDLK_d,
+	mykeys_a=SDLK_SPACE,
+	mykeys_b=SDLK_LSHIFT,
+	mykeys_x=-1,
+	mykeys_y=-2,
+	mykeys_l=SDLK_RETURN,
+	mykeys_r=SDLK_BACKSPACE,
+	mykeys_select=SDLK_ESCAPE,
+	mykeys_start=-3,
+	mykeys_hold=SDLK_PAUSE,
+	mykeys_power=SDLK_HOME
+}keys;
+#endif
+
 void input_done(){
 	if(gamepad)SDL_JoystickClose(gamepad);
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
@@ -58,73 +94,73 @@ void input_do(){
 					QUIT=1;
 				}else if(e.type==SDL_KEYDOWN){
 					switch(e.key.keysym.sym){
-						case SDLK_UP://up
+						case mykeys_up ://up
 							menu_pointer(-1);
 							break;
-						case SDLK_DOWN://down
+						case mykeys_down: //down
 							menu_pointer(1);
 							break;
-						case SDLK_LEFT://left
+						case mykeys_left: //left
 							menu_pointer(-10);
 							break;
-						case SDLK_RIGHT://right
+						case mykeys_right: //right
 							menu_pointer(10);
 							break;
-						case SDLK_LCTRL://a
+						case mykeys_a: //a
 							menu_action(MENU_ACTION_ENTER);
 							break;
-						case SDLK_LALT://b
+						case mykeys_b: //b
 							menu_action(MENU_ACTION_RETURN);
 							break;
-						case SDLK_LSHIFT://x
+						case mykeys_x: //x
 							break;
-						case SDLK_SPACE://y
+						case mykeys_y: //y
 							break;
-						case SDLK_TAB://l
+						case mykeys_l: //l
 							menu_pointer(-50);
 							break;
-						case SDLK_BACKSPACE://r
+						case mykeys_r: //r
 							menu_pointer(50);
 							break;
-						case SDLK_ESCAPE://sel
+						case mykeys_select: //sel
 							QUIT=1;
 							break;
-						case SDLK_RETURN://start
+						case mykeys_start: //start
 							break;
-						case SDLK_PAUSE://hold
+						case mykeys_hold: //hold
 							break;
-						case SDLK_HOME://power
+						case mykeys_power: //power
 							break;
 					}
 				}else if(e.type==SDL_KEYUP){
 					switch(e.key.keysym.sym){
-						case SDLK_UP://up
+						case mykeys_up://up
 							break;
-						case SDLK_DOWN://down
+						case mykeys_down://down
 							break;
-						case SDLK_LEFT://left
+						case mykeys_left://left
 							break;
-						case SDLK_RIGHT://right
+						case mykeys_right://right
 							break;
-						case SDLK_LCTRL://a
+						case mykeys_a://a
 							break;
-						case SDLK_LALT://b
+						case mykeys_b://b
 							break;
-						case SDLK_LSHIFT://x
+						case mykeys_x://x
 							break;
-						case SDLK_SPACE://y
+						case mykeys_y://y
 							break;
-						case SDLK_TAB://l
+						case mykeys_l://l
 							break;
-						case SDLK_BACKSPACE://r
+						case mykeys_r://r
 							break;
-						case SDLK_ESCAPE://sel
+						case mykeys_select://sel
 							break;
-						case SDLK_RETURN://start
+						case mykeys_start://start
 							break;
-						case SDLK_PAUSE://hold
+						case mykeys_hold://hold
 							break;
-						case SDLK_HOME://power
+						case mykeys_power://power
 							break;
 					}
 				}
@@ -143,73 +179,73 @@ void input_do(){
 					QUIT=1;
 				}else if(e.type==SDL_KEYDOWN){
 					switch(e.key.keysym.sym){
-						case SDLK_UP://up
+						case mykeys_up://up
 							menu_pointer(-1);
 							break;
-						case SDLK_DOWN://down
+						case mykeys_down://down
 							menu_pointer(1);
 							break;
-						case SDLK_LEFT://left
+						case mykeys_left://left
 							menu_pointer(-10);
 							break;
-						case SDLK_RIGHT://right
+						case mykeys_right://right
 							menu_pointer(10);
 							break;
-						case SDLK_LCTRL://a
+						case mykeys_a://a
 							menu_action(MENU_ACTION_ENTER);
 							break;
-						case SDLK_LALT://b
+						case mykeys_b://b
 							menu_action(MENU_ACTION_RETURN);
 							break;
-						case SDLK_LSHIFT://x
+						case mykeys_x://x
 							break;
-						case SDLK_SPACE://y
+						case mykeys_y://y
 							break;
-						case SDLK_TAB://l
+						case mykeys_l://l
 							menu_pointer(-maxlines());
 							break;
-						case SDLK_BACKSPACE://r
+						case mykeys_r://r
 							menu_pointer(maxlines());
 							break;
-						case SDLK_ESCAPE://sel
+						case mykeys_select://sel
 							menu_action(MENU_ACTION_ESCAPE);
 							break;
-						case SDLK_RETURN://start
+						case mykeys_start://start
 							break;
-						case SDLK_PAUSE://hold
+						case mykeys_hold://hold
 							break;
-						case SDLK_HOME://power
+						case mykeys_power://power
 							break;
 					}
 				}else if(e.type==SDL_KEYUP){
 					switch(e.key.keysym.sym){
-						case SDLK_UP://up
+						case mykeys_up://up
 							break;
-						case SDLK_DOWN://down
+						case mykeys_down://down
 							break;
-						case SDLK_LEFT://left
+						case mykeys_left://left
 							break;
-						case SDLK_RIGHT://right
+						case mykeys_right://right
 							break;
-						case SDLK_LCTRL://a
+						case mykeys_a://a
 							break;
-						case SDLK_LALT://b
+						case mykeys_b://b
 							break;
-						case SDLK_LSHIFT://x
+						case mykeys_x://x
 							break;
-						case SDLK_SPACE://y
+						case mykeys_y://y
 							break;
-						case SDLK_TAB://l
+						case mykeys_l://l
 							break;
-						case SDLK_BACKSPACE://r
+						case mykeys_r://r
 							break;
-						case SDLK_ESCAPE://sel
+						case mykeys_select://sel
 							break;
-						case SDLK_RETURN://start
+						case mykeys_start://start
 							break;
-						case SDLK_PAUSE://hold
+						case mykeys_hold://hold
 							break;
-						case SDLK_HOME://power
+						case mykeys_power://power
 							break;
 					}
 				}
@@ -228,77 +264,77 @@ void input_do(){
 					QUIT=1;
 				}else if(e.type==SDL_KEYDOWN){
 					switch(e.key.keysym.sym){
-						case SDLK_UP://up
+						case mykeys_up://up
 							//game_moveblock(0,0,-1);
 							break;
-						case SDLK_DOWN://down
+						case mykeys_down://down
 							//game_moveblock(0,0,1);
 							break;
-						case SDLK_LEFT://left
+						case mykeys_left://left
 							game_moveblock(0,-1,0);
 							break;
-						case SDLK_RIGHT://right
+						case mykeys_right://right
 							game_moveblock(0,1,0);
 							break;
-						case SDLK_LCTRL://a
+						case mykeys_a://a
 							block_swapcolours(0,1,0);
 							break;
-						case SDLK_LALT://b
+						case mykeys_b://b
 							block_swapcolours(0,-1,0);
 							break;
-						case SDLK_LSHIFT://x
+						case mykeys_x://x
 							//block_swapcolours(0,0,-1);
 							break;
-						case SDLK_SPACE://y
+						case mykeys_y://y
 							//block_swapcolours(0,0,1);
 							//game_updateblockposition();
 							break;
-						case SDLK_TAB://l
+						case mykeys_l://l
 							releaseblock();
 							//spawnblock();
 							break;
-						case SDLK_BACKSPACE://r
+						case mykeys_r://r
 							//block_delete(game_getnumblocks()-1);
 							break;
-						case SDLK_ESCAPE://sel
+						case mykeys_select://sel
 							QUIT=1;
 							break;
-						case SDLK_RETURN://start
+						case mykeys_start://start
 							break;
-						case SDLK_PAUSE://hold
+						case mykeys_hold://hold
 							break;
-						case SDLK_HOME://power
+						case mykeys_power://power
 							break;
 					}
 				}else if(e.type==SDL_KEYUP){
 					switch(e.key.keysym.sym){
-						case SDLK_UP://up
+						case mykeys_up://up
 							break;
-						case SDLK_DOWN://down
+						case mykeys_down://down
 							break;
-						case SDLK_LEFT://left
+						case mykeys_left://left
 							break;
-						case SDLK_RIGHT://right
+						case mykeys_right://right
 							break;
-						case SDLK_LCTRL://a
+						case mykeys_a://a
 							break;
-						case SDLK_LALT://b
+						case mykeys_b://b
 							break;
-						case SDLK_LSHIFT://x
+						case mykeys_x://x
 							break;
-						case SDLK_SPACE://y
+						case mykeys_y://y
 							break;
-						case SDLK_TAB://l
+						case mykeys_l://l
 							break;
-						case SDLK_BACKSPACE://r
+						case mykeys_r://r
 							break;
-						case SDLK_ESCAPE://sel
+						case mykeys_select://sel
 							break;
-						case SDLK_RETURN://start
+						case mykeys_start://start
 							break;
-						case SDLK_PAUSE://hold
+						case mykeys_hold://hold
 							break;
-						case SDLK_HOME://power
+						case mykeys_power://power
 							break;
 					}
 				}
@@ -317,65 +353,64 @@ void input_do(){
 					QUIT=1;
 				}else if(e.type==SDL_KEYDOWN){
 					switch(e.key.keysym.sym){
-						case SDLK_UP://up
+						case mykeys_up://up
 							break;
-						case SDLK_DOWN://down
+						case mykeys_down://down
 							break;
-						case SDLK_LEFT://left
+						case mykeys_left://left
 							break;
-						case SDLK_RIGHT://right
+						case mykeys_right://right
 							break;
-						case SDLK_LCTRL://a
+						case mykeys_a://a
 							break;
-						case SDLK_LALT://b
+						case mykeys_b://b
 							break;
-						case SDLK_LSHIFT://x
+						case mykeys_x://x
 							break;
-						case SDLK_SPACE://y
+						case mykeys_y://y
 							break;
-						case SDLK_TAB://l
+						case mykeys_l://l
 							break;
-						case SDLK_BACKSPACE://r
+						case mykeys_r://r
 							break;
-						case SDLK_ESCAPE://sel
-							QUIT=1;
+						case mykeys_select://sel
 							break;
-						case SDLK_RETURN://start
+						case mykeys_start://start
 							break;
-						case SDLK_PAUSE://hold
+						case mykeys_hold://hold
 							break;
-						case SDLK_HOME://power
+						case mykeys_power://power
 							break;
 					}
 				}else if(e.type==SDL_KEYUP){
 					switch(e.key.keysym.sym){
-						case SDLK_UP://up
+						case mykeys_up://up
 							break;
-						case SDLK_DOWN://down
+						case mykeys_down://down
 							break;
-						case SDLK_LEFT://left
+						case mykeys_left://left
 							break;
-						case SDLK_RIGHT://right
+						case mykeys_right://right
 							break;
-						case SDLK_LCTRL://a
+						case mykeys_a://a
 							break;
-						case SDLK_LALT://b
+						case mykeys_b://b
 							break;
-						case SDLK_LSHIFT://x
+						case mykeys_x://x
 							break;
-						case SDLK_SPACE://y
+						case mykeys_y://y
 							break;
-						case SDLK_TAB://l
+						case mykeys_l://l
 							break;
-						case SDLK_BACKSPACE://r
+						case mykeys_r://r
 							break;
-						case SDLK_ESCAPE://sel
+						case mykeys_select://sel
 							break;
-						case SDLK_RETURN://start
+						case mykeys_start://start
 							break;
-						case SDLK_PAUSE://hold
+						case mykeys_hold://hold
 							break;
-						case SDLK_HOME://power
+						case mykeys_power://power
 							break;
 					}
 				}
