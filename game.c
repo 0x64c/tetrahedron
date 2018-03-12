@@ -4,7 +4,6 @@
 #include "gfx.h"
 #include <stdio.h>
 #include "input.h"
-#include <math.h>
 #include "sound.h"
 #include <stdlib.h>
 
@@ -24,7 +23,6 @@ typedef struct gameblock{
     float yv;
     int spin;
     int nframesstationary;
-    //int moving;
     SDL_Rect *rect;
     SDL_Texture *tex;
 } gameblock;
@@ -35,9 +33,22 @@ int maxblocks=0;
 GAME_STATE game_state=GAME_NONE;
 struct timespec tspec;
 
-int gameblock_mask[]={0xf,0xf0,0xf00,0xf000};
+
+static uint32_t frand_seedv;
+void seed_frand(uint32_t seed){
+    frand_seedv=seed;
+}
+void seed_frand_time(){
+    clock_gettime(CLOCK_REALTIME,&tspec);
+    seed_frand(tspec.tv_nsec);
+}
+int frand(){
+    frand_seedv = (214013 * frand_seedv + 2531011);
+    return (int)((frand_seedv>>16)&0x7777);
+}
+
 unsigned int block_getcolour(int block, int c){
-    return (allblocks[block]->colours&gameblock_mask[c])>>c*4;
+	return (allblocks[block]->colours>>(c*4))&0xf;
 }
 
 int int_cmp(const void* p1, const void* p2)
@@ -65,40 +76,15 @@ void block_swapcolours(int i,int rot,int ref){
     unsigned int d=block_getcolour(i,0);
     int j;
     for(j=0;j<abs(rot);j++)rota(rot);
-	if(ref!=0)refl(ref);
+    if(ref!=0)refl(ref);
     draw_block_(&allblocks[i]->rect,&allblocks[i]->tex);
     gfx_update();
     sound_play(1);
 }
 
+#define checkc(x,y)block_getcolour(i,x)==block_getcolour(j,y)
 int block_checkcolours(int i,int j,int dir){
-    int ret=0;
-    switch(dir){
-        case 0:
-            if(block_getcolour(i,0)==block_getcolour(j,1))ret=1;//upper
-            break;
-        case 1:
-            if(block_getcolour(i,1)==block_getcolour(j,0))ret=1;//lower
-            break;
-        case 2:
-            if(block_getcolour(i,3)==block_getcolour(j,2))ret=1;//right
-            break;
-        case 3:
-            if(block_getcolour(i,2)==block_getcolour(j,3))ret=1;//left
-            break;
-        default:
-            break;
-    }
-    return ret;
-}
-
-unsigned int shittyrandom(){
-//    srand(time(0));
-#ifndef _WIN_
-    clock_gettime(CLOCK_REALTIME,&tspec);
-    srand(tspec.tv_nsec);
-#endif
-    return (unsigned int)(0x7777&rand());
+    return (dir<2)?((dir==0)?checkc(0,1):checkc(1,0)):((dir==2)?checkc(3,2):checkc(2,3));
 }
 
 SDL_Texture *block_gettex(int block){
@@ -237,8 +223,7 @@ void swapblock(gameblock **a,gameblock **b){
 void spawnblock(){
     numblocks++;
     gameblock **result=realloc(allblocks,numblocks*sizeof(gameblock*));
-    if(result==NULL)free(result);
-    else allblocks=result;
+	allblocks=result;
     if(maxblocks==0){
         allblocks[0]=malloc(sizeof(gameblock));
     }
@@ -253,7 +238,7 @@ void spawnblock(){
         maxblocks--;
     }
     maxblocks++;
-    allblocks[0]->colours=shittyrandom();
+    allblocks[0]->colours=frand();
     allblocks[0]->x=x_max/2;
     allblocks[0]->y=0;
 
@@ -299,7 +284,7 @@ int clearblocks_rcheck(int *list,int *count,int start,int *stationary,int nstati
         list[*count]=j;
         (*count)++;
         clearblocks_rdo(list,count,j,stationary,nstationary);
-		return 1;
+        return 1;
     }
     return 0;
 }
@@ -379,18 +364,21 @@ void game_init(){
     bonus=0;
     gametimer=SDL_GetTicks();
     movementtime=gametimer;
+	seed_frand_time();
     spawnblock();
 }
 void game_done(){
     sound_done();
     int i;
     for(i=0;i<numblocks;i++)free(allblocks[i]);
+	numblocks=0;
 }
 void game_reset(){
     int i;
     for(i=0;i<numblocks;i++)free(allblocks[i]);
     score=0;gameover=0;speed=0;numblocks=0;bonus=0;
     updatescore();
+	seed_frand_time();
     spawnblock();
     sound_play(1);
 }
