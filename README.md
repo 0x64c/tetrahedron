@@ -6,6 +6,6 @@ Features to implement:
 * gamepad support
 * difficulty scaling
 * next block preview
-* score counter display
+* ~score counter display~
 * high scores
-* music and sound effects (custom music, too)
+* ~music and sound effects (custom music, too)~
