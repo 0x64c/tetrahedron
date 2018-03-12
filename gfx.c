@@ -19,15 +19,12 @@
 #define NAME_MAX 255
 #endif
 
-//my_colours.empty.r,my_colours.empty.g,my_colours.empty.b,my_colours.empty.a
-
 #define mcolours(obj,param) obj.param.r,obj.param.g,obj.param.b,obj.param.a
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Renderer *renderer2 = NULL;
 SDL_Surface *surface = NULL;
-//char *fontfile;
 TTF_Font *font = NULL;
 /*#ifdef _GCW_
 int fontsize=12;
@@ -168,22 +165,18 @@ SDL_Rect draw_block(){
             case 7:colour=&my_colours.salmon;break;
             default:colour=&my_colours.white;break;
         }
-        //printf("got colour %d\n",block_getcolour(0,i));
         SDL_SetRenderDrawColor(renderer2,colour->r,colour->g,colour->b,colour->a);
         SDL_RenderDrawLines(renderer2,block_points[i],6);
     }
     SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,black));
     SDL_RenderDrawLines(renderer2,block_points[4],2);
     SDL_RenderDrawLines(renderer2,block_points[5],2);
-    //SDL_RenderFillRect(renderer2,&rect);
-    //printf("rect points %d %d %d %d\n",rect.x,rect.y,rect.w,rect.h);
     return rect;
 }
 
 SDL_Texture* draw_sprite(SDL_Rect* rect2,SDL_Rect (*draw)()){
     SDL_Rect rect = draw();
     SDL_Surface *dummy_surface = SDL_CreateRGBSurface(0,rect.w,rect.h,32,0xFF000000,0x00FF0000,0x0000FF00,0x000000FF);
-    //SDL_Surface *dummy_surface = SDL_CreateRGBSurfaceWithFormat(0,rect.w,rect.h,16,SDL_PIXELFORMAT_RGBA4444);
     SDL_BlitSurface(surface,&rect,dummy_surface,NULL);
     SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer,dummy_surface);//
     SDL_FreeSurface(dummy_surface);
@@ -253,9 +246,6 @@ void init_menu(){
     else tex_menutext=rtex;
     if(rrect==NULL)free(rrect);
     else rect_menutext=rrect;
-
-    //rect_menutext = malloc(menusize * sizeof(SDL_Rect*));
-    //tex_menutext = malloc(menusize * sizeof(SDL_Texture*));
     int i;
     for(i=0;i<menusize;i++){
         rect_menutext[i]=malloc(sizeof(SDL_Rect));
@@ -288,7 +278,6 @@ void init_game(){
     SOMETHING_HAPPENED=1;
 }
 void drawgame(){
-    //SDL_Rect kek={0,0,32,32};
     int i;float x,y;int xx,yy;
     SDL_RenderCopy(renderer,gamebg_tex,gamebg_rect,NULL);
     block_getxy(0,&x,&y);
@@ -300,7 +289,6 @@ void drawgame(){
         block_getxy(i,&x,&y);
         SDL_Rect kek={(int)x,(int)y,blockspacing,blockspacing};
         SDL_RenderCopy(renderer,block_gettex(i),block_getrect(i),&kek);//block_getrect(i));
-        //printf("drawblock %d\n",i);
     }
     SDL_RenderCopy(renderer,tex_score,NULL,rect_score);
     
@@ -336,24 +324,16 @@ void gfx_init(){
         "DejaVuSansMono.ttf",
         "C:/Windows/Fonts/DejaVuSansMono.ttf",
         NULL};
-    //fontfile=(char*)malloc(sizeof(char));
 #ifdef _GCW_
     dim.width=320;
     dim.height=240;
-    //char default_font[]="/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
 #elif defined(_WIN_)
     dim.width=960;
     dim.height=720;
-    //char default_font[]="C:/Windows/Fonts/DejaVuSansMono.ttf";
 #else
     dim.width=960;
     dim.height=720;
-    //char default_font[]="/usr/share/fonts/TTF/DejaVuSansMono.ttf";
 #endif
-    //fontfile=realloc(fontfile,strlen(default_font)*sizeof(char));
-    //fontfile=malloc((strlen(default_font)+1)*sizeof(char));
-    //strcpy(fontfile,default_font);
-
     SDL_Init(SDL_INIT_VIDEO);
     window = SDL_CreateWindow("tetrahedron",SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,dim.width,dim.height,SDL_WINDOW_SHOWN);
@@ -365,7 +345,6 @@ void gfx_init(){
     renderer2 = SDL_CreateSoftwareRenderer(surface);
 
     TTF_Init();
-    //font = TTF_OpenFont(fontfile,fontsize);
     fontsize=dim.height/20;
     int i;
     for(i=0;default_font[i]!=NULL&&font==NULL;i++)
@@ -391,7 +370,6 @@ void gfx_done(){
     SDL_FreeSurface(surface);
     SDL_DestroyWindow(window);
     TTF_CloseFont(font);
-    //free(fontfile);
     TTF_Quit();
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
@@ -400,7 +378,7 @@ void gfx_do(){
     if(SOMETHING_HAPPENED){
         if(menu_state>1)drawmenu();
         if(game_state>1)drawgame();
-        SDL_RenderPresent(renderer);//
+        SDL_RenderPresent(renderer);
         SDL_UpdateWindowSurface(window);
         SOMETHING_HAPPENED=0;
     }

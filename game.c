@@ -118,13 +118,13 @@ void getfinexy(int x,int y,int* finex, int* finey){
     int dimw,dimh;
     getdim(&dimw,&dimh);
     *finex=dimw/2-blockspacing*x_max/2+x*blockspacing;
-    *finey=blockspacing*1.5+y*blockspacing;
+    *finey=blockspacing*1.5f+y*blockspacing;
 }
 void getxy(int finex,int finey,int *x,int *y){
     int dimw,dimh;
     getdim(&dimw,&dimh);
     *x=(finex-dimw/2+blockspacing*x_max/2)/blockspacing;
-    *y=(finey-blockspacing*1.5)/blockspacing;
+    *y=(finey-blockspacing*1.5f)/blockspacing;
 }
 
 void spawnblock();
