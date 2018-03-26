@@ -1,4 +1,8 @@
+#ifndef SDL_h_
 #include <SDL2/SDL.h>
+#define SDL_h_
+#endif
+#include "input.h"
 #include "menu.h"
 #include "gfx.h"
 #include "game.h"
@@ -14,7 +18,7 @@ int QUIT=0;
 
 #define GCWJOYSTICK "linkdev device (Analog 2-axis 8-button 2-hat)"
 
-void input_init(){
+void input_init(void){
 	SDL_InitSubSystem(SDL_INIT_JOYSTICK);
 	if (SDL_NumJoysticks()>0) {
 #ifdef GCW
@@ -62,12 +66,12 @@ typedef enum{
 }keys;
 #endif
 
-void input_done(){
+void input_done(void){
 	if(gamepad)SDL_JoystickClose(gamepad);
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
-void input_do(){
+void input_do(void){
 	/*if(gamepad){
 		int joy_x = SDL_JoystickGetAxis(gamepad,0);
 		int joy_y = SDL_JoystickGetAxis(gamepad,1);

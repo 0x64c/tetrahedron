@@ -11,13 +11,13 @@ int blockspacing;
 #define x_max 6
 #define y_max 12
 
-#define max(a,b) \
+/*#define max(a,b) \
 ({ __typeof__ (a) _a = (a); \
 __typeof__ (b) _b = (b); \
-_a > _b ? _a : _b; })
+_a > _b ? _a : _b; })*/
 
 #define min(a,b) \
-({ __typeof__ (a) _a = (a); \
+__extension__({ __typeof__ (a) _a = (a); \
 __typeof__ (b) _b = (b); \
 _a < _b ? _a : _b; })
 
@@ -36,11 +36,4 @@ typedef enum{
 	GAME_START=		1<<1,
 	GAME_END=		1<<2
 } GAME_STATE;
-
-/*typedef enum{
-	int blocksub1=0xf,
-	int blocksub2=0xf0,
-	int blocksub3=0xf00,
-	int blocksub4=0xf000
-}gameblock_mask;*/
 

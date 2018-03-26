@@ -1,5 +1,9 @@
-#include "mytypes.h"
+#ifndef SDL_h_
 #include <SDL2/SDL.h>
+#define SDL_h_
+#endif
+#include "mytypes.h"
+#include "game.h"
 #include <time.h>
 #include "gfx.h"
 #include <stdio.h>
@@ -13,20 +17,6 @@ int gameover;
 int bonus;
 unsigned int gametimer,movementtime,bonustime;
 
-typedef struct gameblock{
-    unsigned int colours;
-    int x;
-    int y;
-    float finex;
-    float finey;
-    float xv;
-    float yv;
-    int spin;
-    int nframesstationary;
-    SDL_Rect *rect;
-    SDL_Texture *tex;
-} gameblock;
-
 gameblock **allblocks;
 int numblocks=0;
 int maxblocks=0;
@@ -38,11 +28,11 @@ static uint32_t frand_seedv;
 void seed_frand(uint32_t seed){
     frand_seedv=seed;
 }
-void seed_frand_time(){
-    clock_gettime(CLOCK_REALTIME,&tspec);
+void seed_frand_time(void){
+    clock_gettime(CLOCK_MONOTONIC,&tspec);
     seed_frand(tspec.tv_nsec);
 }
-int frand(){
+int frand(void){
     frand_seedv = (214013 * frand_seedv + 2531011);
     return (int)((frand_seedv>>16)&0x7777);
 }
@@ -93,7 +83,7 @@ SDL_Texture *block_gettex(int block){
 SDL_Rect *block_getrect(int block){
     return allblocks[block]->rect;
 }
-int game_getnumblocks(){
+int game_getnumblocks(void){
     return numblocks;
 }
 
@@ -220,7 +210,7 @@ void swapblock(gameblock **a,gameblock **b){
     *a=*b;
     *b=temp;
 }
-void spawnblock(){
+void spawnblock(void){
     numblocks++;
     gameblock **result=realloc(allblocks,numblocks*sizeof(gameblock*));
 	allblocks=result;
@@ -256,7 +246,7 @@ void spawnblock(){
     gfx_update();
     if(game_checkspot(0,0,0)>=0)gameover=1;
 }
-void game_updateblockposition(){
+void game_updateblockposition(void){
     int i;
     for(i=0;i<numblocks;i++){
         if((abs(allblocks[i]->xv)>0.001f)||(abs(allblocks[i]->yv)>0.001f))
@@ -272,7 +262,7 @@ int array_checkcontains(int* arr,int max,int val){
     return 0;
 }
 
-void clearblocks_rdo(int*,int*,int,int*,int);
+
 int clearblocks_rcheck(int *list,int *count,int start,int *stationary,int nstationary,
     int x,int y,int dir){
     int j;
@@ -322,7 +312,7 @@ void clearblocks_rsetup(int *arr,int *count,int* checked,int *numchecked,int max
     }
 }
 
-void game_clearblocks(){
+void game_clearblocks(void){
     int i;
     int toclear[numblocks];
     int checked[numblocks];
@@ -347,7 +337,7 @@ void game_clearblocks(){
         block_delete(toclear[i]);
     }
 }
-void releaseblock(){
+void releaseblock(void){
     int i;
     int top_x=y_max+1;
     for(i=1;i<numblocks;i++){
@@ -355,7 +345,7 @@ void releaseblock(){
     }
     game_moveblock(0,0,top_x-allblocks[0]->y-1);
 }
-void game_init(){
+void game_init(void){
     sound_init();
     sound_startbgm();
     score=0;
@@ -367,13 +357,13 @@ void game_init(){
 	seed_frand_time();
     spawnblock();
 }
-void game_done(){
+void game_done(void){
     sound_done();
     int i;
     for(i=0;i<numblocks;i++)free(allblocks[i]);
 	numblocks=0;
 }
-void game_reset(){
+void game_reset(void){
     int i;
     for(i=0;i<numblocks;i++)free(allblocks[i]);
     score=0;gameover=0;speed=0;numblocks=0;bonus=0;
@@ -382,7 +372,7 @@ void game_reset(){
     spawnblock();
     sound_play(1);
 }
-void game_do(){
+void game_do(void){
     gametimer=SDL_GetTicks();
     if(gametimer-movementtime>30){
         game_updateblockposition();

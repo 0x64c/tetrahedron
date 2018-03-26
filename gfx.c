@@ -1,4 +1,7 @@
+#ifndef SDL_h_
 #include <SDL2/SDL.h>
+#define SDL_h_
+#endif
 #include <SDL2/SDL_ttf.h>
 #include <string.h>
 #include "menu.h"
@@ -46,7 +49,7 @@ struct dim{
     int height;
 }dim;
 
-Uint8 randcolour(){
+Uint8 randcolour(void){
     Uint8 c=0x00;
     switch(frand()%5){
         case 0:c=0x22;break;
@@ -108,11 +111,11 @@ SDL_Rect *rect_score;
 SDL_Texture *gamept_tex;
 SDL_Rect *gamept_rect;
 
-int maxlines(){
+int maxlines(void){
     return dim.height/fontsize;
 }
 
-SDL_Rect draw_gamebg(){
+SDL_Rect draw_gamebg(void){
     SDL_Rect rect={0,0,dim.width,dim.height};
     SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,empty));
     SDL_RenderClear(renderer2);
@@ -141,7 +144,7 @@ SDL_Rect draw_gamebg(){
     return rect;
 }
 
-SDL_Rect draw_gamepointer(){
+SDL_Rect draw_gamepointer(void){
     SDL_Rect rect={0,0,blockspacing,blockspacing*(y_max+1)};
     SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,empty));
     SDL_RenderClear(renderer2);
@@ -152,7 +155,7 @@ SDL_Rect draw_gamepointer(){
 }
 
 
-SDL_Rect draw_menubg(){
+SDL_Rect draw_menubg(void){
     SDL_Rect rect={0,0,dim.width,dim.height};
     SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,empty));
     SDL_RenderClear(renderer2);
@@ -161,7 +164,7 @@ SDL_Rect draw_menubg(){
     return rect;
 }
 
-SDL_Rect draw_block(){
+SDL_Rect draw_block(void){
     SDL_Rect rect={0,0,8,8};
     SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,empty));
     SDL_RenderClear(renderer2);
@@ -205,7 +208,7 @@ void draw_block_(SDL_Rect **rect,SDL_Texture **tex){
     (*tex)=draw_sprite((*rect),draw_block);
 }
 
-void drawmenu(){
+void drawmenu(void){
     if(!menu_state)return;
     SDL_RenderCopy(renderer,tex_menu,NULL,&rect_menu);//
     int i;
@@ -219,7 +222,7 @@ void drawmenu(){
         default:break;
     }
 }
-void del_menu(){
+void del_menu(void){
     int i;
     for(i=0;i<menusize;i++){
         SDL_DestroyTexture(tex_menutext[i]);
@@ -250,7 +253,7 @@ void updatemenu(int line, MENU_CATEGORY category){
     SOMETHING_HAPPENED=1;
 }
 
-void init_menu(){
+void init_menu(void){
     tex_menu = draw_sprite(&rect_menu,(*draw_menubg));
     menusize=min(menu_getsize(menu_state)-maxlines()*menuline_offset,maxlines());
 
@@ -266,7 +269,7 @@ void init_menu(){
         updatemenu(i,menu_state);
     }
 }
-void updatescore(){
+void updatescore(void){
     int textw=0,texth=0;
     SDL_Surface *messagebox=NULL;
     char buffer[LINE_MAX+1];
@@ -282,7 +285,7 @@ void updatescore(){
     SDL_FreeSurface(messagebox);
     SOMETHING_HAPPENED=1;
 }
-void init_game(){
+void init_game(void){
     gamebg_rect=malloc(sizeof(SDL_Rect));
     gamebg_tex=draw_sprite(gamebg_rect,(*draw_gamebg));
     gamept_rect=malloc(sizeof(SDL_Rect));
@@ -291,7 +294,7 @@ void init_game(){
     updatescore();
     SOMETHING_HAPPENED=1;
 }
-void drawgame(){
+void drawgame(void){
     int i;float x,y;int xx,yy;
     SDL_RenderCopy(renderer,gamebg_tex,gamebg_rect,NULL);
     block_getxy(0,&x,&y);
@@ -307,7 +310,7 @@ void drawgame(){
     SDL_RenderCopy(renderer,tex_score,NULL,rect_score);
     
 }
-void del_game(){
+void del_game(void){
     SDL_DestroyTexture(gamebg_tex);
     SDL_DestroyTexture(gamept_tex);
     SDL_DestroyTexture(tex_score);
@@ -316,7 +319,7 @@ void del_game(){
     free(rect_score);
 }
 
-void gfx_update(){
+void gfx_update(void){
     SOMETHING_HAPPENED=1;
 }
 
@@ -331,7 +334,7 @@ void getdim(int* x,int *y){
     *y=dim.height;
 }
 
-void gfx_init(){
+void gfx_init(void){
     char *default_font[]={
         "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
         "/usr/share/fonts/TTF/DejaVuSansMono.ttf",
@@ -375,7 +378,7 @@ void gfx_init(){
     init_menu();
 }
 
-void gfx_done(){
+void gfx_done(void){
     if(menu_state>1)del_menu();
     if(game_state>1)del_game();
     free(rect_menutext);
@@ -389,7 +392,7 @@ void gfx_done(){
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void gfx_do(){
+void gfx_do(void){
     if(SOMETHING_HAPPENED){
         if(menu_state>1)drawmenu();
         if(game_state>1)drawgame();

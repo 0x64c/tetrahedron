@@ -1,20 +1,24 @@
+#ifndef SDL_h_
+#include <SDL2/SDL.h>
+#define SDL_h_
+#endif
+#include "core.h"
 #include "gfx.h"
 #include "input.h"
 #include "game.h"
-#include <SDL2/SDL.h>
 #include <stdlib.h>
 
 #define FPS 60
 
-void core_init(){
+void core_init(void){
 	gfx_init();
 	input_init();
 }
-void core_done(){
+void core_done(void){
 	gfx_done();
 	input_done();
 }
-void core_do(){
+void core_do(void){
 	unsigned int start=SDL_GetTicks();
 	unsigned int time=0;
 	while(!QUIT){
