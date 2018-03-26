@@ -129,8 +129,8 @@ void getxy(int finex,int finey,int *x,int *y){
 
 void spawnblock();
 void game_moveblockv(int i){
-    if(i==0&&allblocks[i]->nframesstationary>4){spawnblock();return;}
-    else if(i==0&&allblocks[i]->nframesstationary==2)sound_play(0);
+    if(i==0&&allblocks[i]->nframesstationary>4){spawnblock();sound_play(0);return;}
+//    else if(i==0&&allblocks[i]->nframesstationary==2)sound_play(0);
     int tx,ty;
     if(allblocks[i]->xv>0)tx=1;
     else if(allblocks[i]->xv<0)tx=-1;

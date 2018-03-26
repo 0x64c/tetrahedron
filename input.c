@@ -6,7 +6,7 @@
 #include "mytypes.h"
 #endif
 #include <stdlib.h>
-#include "sound.h"
+//#include "sound.h"
 SDL_Event e;
 SDL_Joystick *gamepad=NULL;
 int joydeadzone=1<<10;
@@ -130,91 +130,6 @@ void input_do(){
 						case mykeys_hold: //hold
 							break;
 						case mykeys_power: //power
-							break;
-					}
-				}else if(e.type==SDL_KEYUP){
-					switch(e.key.keysym.sym){
-						case mykeys_up://up
-							break;
-						case mykeys_down://down
-							break;
-						case mykeys_left://left
-							break;
-						case mykeys_right://right
-							break;
-						case mykeys_a://a
-							break;
-						case mykeys_b://b
-							break;
-						case mykeys_x://x
-							break;
-						case mykeys_y://y
-							break;
-						case mykeys_l://l
-							break;
-						case mykeys_r://r
-							break;
-						case mykeys_select://sel
-							break;
-						case mykeys_start://start
-							break;
-						case mykeys_hold://hold
-							break;
-						case mykeys_power://power
-							break;
-					}
-				}
-				break;
-			case DIR_MENU:
-				if(e.type==SDL_JOYAXISMOTION){
-					if((e.jaxis.value>joydeadzone)||(e.jaxis.value<-joydeadzone)){
-						switch(e.jaxis.axis){
-							case 0:
-								break;
-							case 1:
-								break;
-						}
-					}
-				}else if(e.type==SDL_QUIT){
-					QUIT=1;
-				}else if(e.type==SDL_KEYDOWN){
-					switch(e.key.keysym.sym){
-						case mykeys_up://up
-							menu_pointer(-1);
-							break;
-						case mykeys_down://down
-							menu_pointer(1);
-							break;
-						case mykeys_left://left
-							menu_pointer(-10);
-							break;
-						case mykeys_right://right
-							menu_pointer(10);
-							break;
-						case mykeys_a://a
-							menu_action(MENU_ACTION_ENTER);
-							break;
-						case mykeys_b://b
-							menu_action(MENU_ACTION_RETURN);
-							break;
-						case mykeys_x://x
-							break;
-						case mykeys_y://y
-							break;
-						case mykeys_l://l
-							menu_pointer(-maxlines());
-							break;
-						case mykeys_r://r
-							menu_pointer(maxlines());
-							break;
-						case mykeys_select://sel
-							menu_action(MENU_ACTION_ESCAPE);
-							break;
-						case mykeys_start://start
-							break;
-						case mykeys_hold://hold
-							break;
-						case mykeys_power://power
 							break;
 					}
 				}else if(e.type==SDL_KEYUP){

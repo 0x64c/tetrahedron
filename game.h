@@ -18,3 +18,4 @@ extern void releaseblock();
 extern int score;
 extern int bonus;
 extern void getfinexy(int,int,int*,int*);
+extern int frand();

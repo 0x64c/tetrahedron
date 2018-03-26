@@ -7,17 +7,19 @@
 #ifndef MYDEF
 #include "mytypes.h"
 #endif
-#include <dirent.h>
 #include <stdlib.h>
 #include "input.h"
 
-#ifndef _WIN_
+//#include <dirent.h>
+/*#ifndef _WIN_
 #include <linux/limits.h>
 #else
 #include <limits.h>
 //#define PATH_MAX 259
 #define NAME_MAX 255
-#endif
+#endif*/
+
+int LINE_MAX = 0;
 
 #define mcolours(obj,param) obj.param.r,obj.param.g,obj.param.b,obj.param.a
 
@@ -26,11 +28,6 @@ SDL_Renderer *renderer = NULL;
 SDL_Renderer *renderer2 = NULL;
 SDL_Surface *surface = NULL;
 TTF_Font *font = NULL;
-/*#ifdef _GCW_
-int fontsize=12;
-#else
-int fontsize=32;
-#endif*/
 int fontsize;
 int SOMETHING_HAPPENED=1;
 int menusize;
@@ -48,6 +45,18 @@ struct dim{
     int width;
     int height;
 }dim;
+
+Uint8 randcolour(){
+    Uint8 c=0x00;
+    switch(frand()%5){
+        case 0:c=0x22;break;
+        case 1:c=0x33;break;
+        case 2:c=0x44;break;
+        case 3:c=0x55;break;
+        case 4:c=0x66;break;
+    }
+    return c;
+}
 
 struct colours{
     SDL_Colour empty;
@@ -107,8 +116,12 @@ SDL_Rect draw_gamebg(){
     SDL_Rect rect={0,0,dim.width,dim.height};
     SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,empty));
     SDL_RenderClear(renderer2);
-    SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,black));
-    SDL_RenderFillRect(renderer2,&rect);
+    int i;
+    for(i=0;i<dim.height;i+=blockspacing*2){
+        SDL_Rect rect_={0,i,dim.width,blockspacing*2};
+        SDL_SetRenderDrawColor(renderer2,randcolour(),randcolour(),randcolour(),0xFF);
+        SDL_RenderFillRect(renderer2,&rect_);
+    }
     SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,white));
     
     int x,y,x1,y1;
@@ -132,8 +145,9 @@ SDL_Rect draw_gamepointer(){
     SDL_Rect rect={0,0,blockspacing,blockspacing*(y_max+1)};
     SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,empty));
     SDL_RenderClear(renderer2);
-    SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,white));
-    SDL_RenderDrawRect(renderer2,&rect);
+    SDL_SetRenderDrawColor(renderer2,mcolours(my_colours,white)&0xFFFFFFCC);
+//    SDL_RenderDrawRect(renderer2,&rect);
+    SDL_RenderFillRect(renderer2,&rect);
     return rect;
 }
 
@@ -218,7 +232,7 @@ void updatemenu(int line, MENU_CATEGORY category){
     int textw=0,texth=0;
     SDL_Surface *messagebox = NULL;
     char cursor;
-    char buffer[NAME_MAX];
+    char buffer[LINE_MAX+1];
     if(line==menu_position)cursor='*';
     else cursor=' ';
     sprintf(buffer,"%c%s",cursor,menu_getline(line+maxlines()*menuline_offset,category));
@@ -255,7 +269,7 @@ void init_menu(){
 void updatescore(){
     int textw=0,texth=0;
     SDL_Surface *messagebox=NULL;
-    char buffer[256];
+    char buffer[LINE_MAX+1];
     sprintf(buffer,"Score: %d x%d",score,bonus);
     messagebox=TTF_RenderText_Solid(font,buffer,my_colours.white);
     SDL_Texture *message=SDL_CreateTextureFromSurface(renderer,messagebox);
@@ -346,6 +360,7 @@ void gfx_init(){
 
     TTF_Init();
     fontsize=dim.height/20;
+    LINE_MAX=dim.width/fontsize;
     int i;
     for(i=0;default_font[i]!=NULL&&font==NULL;i++)
         font = TTF_OpenFont(default_font[i],fontsize);
