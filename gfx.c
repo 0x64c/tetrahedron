@@ -23,6 +23,7 @@
 #endif*/
 
 int LINE_MAX = 0;
+int blockspacing;
 
 #define mcolours(obj,param) obj.param.r,obj.param.g,obj.param.b,obj.param.a
 
@@ -341,23 +342,17 @@ void gfx_init(void){
         "DejaVuSansMono.ttf",
         "C:/Windows/Fonts/DejaVuSansMono.ttf",
         NULL};
-#ifdef _GCW_
-    dim.width=320;
-    dim.height=240;
-#elif defined(_WIN_)
-    dim.width=960;
-    dim.height=720;
-#else
-    dim.width=960;
-    dim.height=720;
-#endif
     SDL_Init(SDL_INIT_VIDEO);
+    SDL_DisplayMode DM;
+    SDL_GetCurrentDisplayMode(0, &DM);
+    dim.width=DM.w;
+    dim.height=DM.h;
     window = SDL_CreateWindow("tetrahedron",SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,dim.width,dim.height,SDL_WINDOW_SHOWN);
-    renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED|
-        SDL_RENDERER_TARGETTEXTURE);
+    renderer = SDL_CreateRenderer(window,1,SDL_RENDERER_ACCELERATED|
+        SDL_RENDERER_TARGETTEXTURE|SDL_RENDERER_PRESENTVSYNC);
 
-    surface = SDL_CreateRGBSurface(0,dim.width,dim.height,32,0xFF000000,0x00FF0000,0x0000FF00,0x000000FF);
+    surface = SDL_CreateRGBSurface(0,dim.width,dim.height,32,0,0,0,0);//,0xFF000000,0x00FF0000,0x0000FF00,0x000000FF);
     //surface = SDL_CreateRGBSurfaceWithFormat(0,dim.width,dim.height,16,SDL_PIXELFORMAT_RGBA4444);
     renderer2 = SDL_CreateSoftwareRenderer(surface);
 

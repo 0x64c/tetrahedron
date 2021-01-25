@@ -1,13 +1,5 @@
 #define MYDEF
 
-/*#ifdef _GCW_
-#define blockspacing 16
-#else
-#define blockspacing 48
-#endif*/
-
-int blockspacing;
-
 #define x_max 6
 #define y_max 12
 

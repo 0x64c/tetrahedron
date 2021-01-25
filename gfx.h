@@ -27,4 +27,4 @@ SDL_Texture* draw_sprite(SDL_Rect*,SDL_Rect(*)());
 void drawmenu(void);
 void drawgame(void);
 void del_game(void);
-
+extern int blockspacing;

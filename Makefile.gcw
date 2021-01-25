@@ -37,13 +37,10 @@ ALL : $(EXE)
 
 $(EXE) : $(OBJS)
 	$(CXX) $(OBJS) -o $(EXE) $(LDFLAGS)
-	$(MKDIR) $(OPK_DIR)
 	$(STRIP) $(EXE)
-	$(CP) $(EXE) $(OPK_DIR)/$(EXE)
 
 opk : $(EXE)
-	$(CP) ./*.ogg $(OPK_DIR)
-	mksquashfs $(OPK_DIR) $(EXE).opk -all-root -noappend -no-exports -no-xattrs
+	mksquashfs ./*.ogg ./tetrahedron ./opk_build/* $(EXE).opk -all-root -noappend -no-exports -no-xattrs
 
 #upload : opk
 #	scp ./$(OPK) $(REMOTE_USER)@$(REMOTE_IP):$(REMOTE_PATH)/$(OPK)

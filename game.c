@@ -249,7 +249,7 @@ void spawnblock(void){
 void game_updateblockposition(void){
     int i;
     for(i=0;i<numblocks;i++){
-        if((abs(allblocks[i]->xv)>0.001f)||(abs(allblocks[i]->yv)>0.001f))
+        if((fabs(allblocks[i]->xv)>0.001f)||(fabs(allblocks[i]->yv)>0.001f))
             game_moveblockv(i);
     }
 }
